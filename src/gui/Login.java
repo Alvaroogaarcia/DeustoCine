@@ -1,75 +1,91 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+public class Login extends JFrame {
 
-public class Login extends JFrame{
+    public Login() {
+        // Configuración de la ventana
+        this.setLocationRelativeTo(null);
+        this.setSize(450, 200);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.setTitle("Deusto Cine - Iniciar sesión");
 
-	public Login() {
-		// TODO Auto-generated constructor stub
-		
-		// Configuracion de la ventana	
-		this.setLocationRelativeTo(null);
-		this.setSize(450,200);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setResizable(false);
-		this.setTitle("Deusto Cine - Iniciar sesion");
-		
-		//Panel principal
-		JPanel panelPrincipal = new JPanel();
-		panelPrincipal.setLayout(new GridLayout(3,2,10,10));
-		
-		//Componentes de la ventana
-		JButton btnIniciarSesion = new JButton("Iniciar Sesion");
-		JButton btnRegistrarse = new JButton("Registrarse");
-		JLabel lblUsuario = new JLabel("Usuario");
-		JLabel lblContraseña = new JLabel("Contraseña");
-		JTextField txtUsuario = new JTextField();
-		JPasswordField txtContraseña = new JPasswordField();
-		
-		panelPrincipal.add(lblUsuario);
-		panelPrincipal.add(txtUsuario);
-		panelPrincipal.add(lblContraseña);
-		panelPrincipal.add(txtContraseña);
-		panelPrincipal.add(btnIniciarSesion);
-		panelPrincipal.add(btnRegistrarse);
-		
-		this.add(panelPrincipal);
-		
-		//Accion de mover a la ventana de registro
-		
-		btnRegistrarse.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-				Registro r = new Registro();
-				r.setVisible(true);
-				dispose();
-				
-			}
-		});
-		
-		
-		
-		
-	}
+        // Panel principal
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new GridLayout(3, 2, 10, 10));
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		Login l = new Login();
-		l.setVisible(true);
+        // Componentes
+        JLabel lblUsuario = new JLabel("Usuario");
+        JLabel lblContraseña = new JLabel("Contraseña");
+        JTextField txtUsuario = new JTextField();
+        JPasswordField txtContraseña = new JPasswordField();
+        JButton btnIniciarSesion = new JButton("Iniciar Sesión");
+        JButton btnRegistrarse = new JButton("Registrarse");
 
-	}
+        // Añadir componentes al panel
+        panelPrincipal.add(lblUsuario);
+        panelPrincipal.add(txtUsuario);
+        panelPrincipal.add(lblContraseña);
+        panelPrincipal.add(txtContraseña);
+        panelPrincipal.add(btnIniciarSesion);
+        panelPrincipal.add(btnRegistrarse);
 
+        this.add(panelPrincipal);
+
+        // Acción para el botón Registrarse
+        btnRegistrarse.addActionListener(e -> mostrarDialogRegistro());
+    }
+
+    // Método para mostrar el diálogo de selección
+    private void mostrarDialogRegistro() {
+        JDialog dialog = new JDialog(this, "Seleccionar tipo de registro", true);
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
+
+        // Panel con las opciones
+        JPanel panelOpciones = new JPanel(new GridLayout(2, 1));
+        JRadioButton rbUsuario = new JRadioButton("Usuario");
+        JRadioButton rbEntidad = new JRadioButton("Entidad");
+        ButtonGroup grupo = new ButtonGroup();
+        grupo.add(rbUsuario);
+        grupo.add(rbEntidad);
+        panelOpciones.add(rbUsuario);
+        panelOpciones.add(rbEntidad);
+
+        // Botón continuar
+        JButton btnContinuar = new JButton("Continuar");
+        btnContinuar.addActionListener(ev -> {
+            if (rbUsuario.isSelected()) {
+                Registro registroUsuario = new Registro();
+                registroUsuario.setVisible(true);
+                dialog.dispose();
+                this.dispose(); // cierra Login
+            } else if (rbEntidad.isSelected()) {
+                RegistroEntidad registroEntidad = new RegistroEntidad();
+                registroEntidad.setVisible(true);
+                dialog.dispose();
+                this.dispose(); // cierra Login
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Debes seleccionar una opción",
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        dialog.add(panelOpciones, BorderLayout.CENTER);
+        dialog.add(btnContinuar, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Login login = new Login();
+            login.setVisible(true);
+        });
+    }
 }
