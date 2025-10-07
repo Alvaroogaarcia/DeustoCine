@@ -7,8 +7,8 @@ public class Cliente extends Usuario {
         super();
     }
 
-    public Cliente(String nombre, String email, String numTelefono, String direccion, String contraseña, String fechaNacimiento) {
-        super(nombre, email, numTelefono, direccion, contraseña);
+    public Cliente(String nombre, String email, String numTelefono, String direccion, String contrasenya, String fechaNacimiento) {
+        super(nombre, email, numTelefono, direccion, contrasenya);
         this.fechaNacimiento = fechaNacimiento; // 🔑 asignar el valor
     }
 

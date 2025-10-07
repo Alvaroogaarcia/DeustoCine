@@ -67,13 +67,13 @@ public class Registro extends JFrame {
         gbc.gridx = 0; gbc.gridy = 6; panel.add(lblCodigoPostal, gbc);
         JTextField txtCodigoPostal = new JTextField(20); gbc.gridx = 1; panel.add(txtCodigoPostal, gbc);
 
-        JLabel lblContraseña = new JLabel("Contraseña:");
-        gbc.gridx = 0; gbc.gridy = 7; panel.add(lblContraseña, gbc);
-        JPasswordField txtContraseña = new JPasswordField(20); gbc.gridx = 1; panel.add(txtContraseña, gbc);
+        JLabel lblContrasenya = new JLabel("Contraseña:");
+        gbc.gridx = 0; gbc.gridy = 7; panel.add(lblContrasenya, gbc);
+        JPasswordField txtContrasenya = new JPasswordField(20); gbc.gridx = 1; panel.add(txtContrasenya, gbc);
 
-        JLabel lblConfirmarContraseña = new JLabel("Confirmar Contraseña:");
-        gbc.gridx = 0; gbc.gridy = 8; panel.add(lblConfirmarContraseña, gbc);
-        JPasswordField txtConfirmarContraseña = new JPasswordField(20); gbc.gridx = 1; panel.add(txtConfirmarContraseña, gbc);
+        JLabel lblConfirmarContrasenya = new JLabel("Confirmar Contraseña:");
+        gbc.gridx = 0; gbc.gridy = 8; panel.add(lblConfirmarContrasenya, gbc);
+        JPasswordField txtConfirmarContrasenya = new JPasswordField(20); gbc.gridx = 1; panel.add(txtConfirmarContrasenya, gbc);
 
         // Botones
         JButton btnCrearCuenta = new JButton("Crear Cuenta");
@@ -97,8 +97,8 @@ public class Registro extends JFrame {
             String phone = txtTelefono.getText().trim();
             String address = txtDireccion.getText().trim();
             String postalCode = txtCodigoPostal.getText().trim();
-            String password = new String(txtContraseña.getPassword());
-            String confirmPassword = new String(txtConfirmarContraseña.getPassword());
+            String password = new String(txtContrasenya.getPassword());
+            String confirmPassword = new String(txtConfirmarContrasenya.getPassword());
             Date birthDate = (Date) spinnerNacimiento.getValue();
 
             // Validaciones básicas

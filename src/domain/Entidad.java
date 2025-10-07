@@ -7,8 +7,8 @@ public class Entidad extends Usuario {
         super(); 
     }
 
-    public Entidad(String nombre, String email, String numTelefono, String direccion, String contraseña, String nif) {
-        super(nombre, email, numTelefono, direccion, contraseña);
+    public Entidad(String nombre, String email, String numTelefono, String direccion, String contrasenya, String nif) {
+        super(nombre, email, numTelefono, direccion, contrasenya);
         this.nif = nif; 
     }
 

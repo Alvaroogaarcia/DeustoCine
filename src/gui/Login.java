@@ -20,17 +20,17 @@ public class Login extends JFrame {
 
         // Componentes
         JLabel lblUsuario = new JLabel("Usuario");
-        JLabel lblContraseña = new JLabel("Contraseña");
+        JLabel lblContrasenya = new JLabel("Contraseña");
         JTextField txtUsuario = new JTextField();
-        JPasswordField txtContraseña = new JPasswordField();
+        JPasswordField txtContrasenya = new JPasswordField();
         JButton btnIniciarSesion = new JButton("Iniciar Sesión");
         JButton btnRegistrarse = new JButton("Registrarse");
 
         // Añadir componentes al panel
         panelPrincipal.add(lblUsuario);
         panelPrincipal.add(txtUsuario);
-        panelPrincipal.add(lblContraseña);
-        panelPrincipal.add(txtContraseña);
+        panelPrincipal.add(lblContrasenya);
+        panelPrincipal.add(txtContrasenya);
         panelPrincipal.add(btnIniciarSesion);
         panelPrincipal.add(btnRegistrarse);
 

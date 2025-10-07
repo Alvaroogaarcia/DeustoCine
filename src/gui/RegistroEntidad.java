@@ -54,13 +54,13 @@ public class RegistroEntidad extends JFrame {
         gbc.gridx = 0; gbc.gridy = 5; panel.add(lblNIF, gbc);
         JTextField txtNIF = new JTextField(20); gbc.gridx = 1; panel.add(txtNIF, gbc);
 
-        JLabel lblContraseña = new JLabel("Contraseña:");
-        gbc.gridx = 0; gbc.gridy = 6; panel.add(lblContraseña, gbc);
-        JPasswordField txtContraseña = new JPasswordField(20); gbc.gridx = 1; panel.add(txtContraseña, gbc);
+        JLabel lblContrasenya = new JLabel("Contrasenya:");
+        gbc.gridx = 0; gbc.gridy = 6; panel.add(lblContrasenya, gbc);
+        JPasswordField txtContrasenya = new JPasswordField(20); gbc.gridx = 1; panel.add(txtContrasenya, gbc);
 
-        JLabel lblConfirmarContraseña = new JLabel("Confirmar Contraseña:");
-        gbc.gridx = 0; gbc.gridy = 7; panel.add(lblConfirmarContraseña, gbc);
-        JPasswordField txtConfirmarContraseña = new JPasswordField(20); gbc.gridx = 1; panel.add(txtConfirmarContraseña, gbc);
+        JLabel lblConfirmarContrasenya = new JLabel("Confirmar Contrasenya:");
+        gbc.gridx = 0; gbc.gridy = 7; panel.add(lblConfirmarContrasenya, gbc);
+        JPasswordField txtConfirmarContrasenya = new JPasswordField(20); gbc.gridx = 1; panel.add(txtConfirmarContrasenya, gbc);
 
         // Botones
         JButton btnCrearCuenta = new JButton("Crear Cuenta");
@@ -84,8 +84,8 @@ public class RegistroEntidad extends JFrame {
             String telefono = txtTelefono.getText().trim();
             String direccion = txtDireccion.getText().trim();
             String nif = txtNIF.getText().trim();
-            String password = new String(txtContraseña.getPassword());
-            String confirmPassword = new String(txtConfirmarContraseña.getPassword());
+            String password = new String(txtContrasenya.getPassword());
+            String confirmPassword = new String(txtConfirmarContrasenya.getPassword());
 
             // Validaciones
             if (nombre.isEmpty() || email.isEmpty() || telefono.isEmpty() || direccion.isEmpty() ||

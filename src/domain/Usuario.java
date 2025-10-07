@@ -5,17 +5,17 @@ public class Usuario {
     private String email;
     private String numTelefono;
     private String direccion;
-    private String contraseña;
+    private String contrasenya;
 
     public Usuario() {
     }
 
-    public Usuario(String nombre, String email, String numTelefono, String direccion, String contraseña) {
+    public Usuario(String nombre, String email, String numTelefono, String direccion, String contrasenya) {
         this.nombre = nombre;
         this.email = email;
         this.numTelefono = numTelefono;
         this.direccion = direccion;
-        this.contraseña = contraseña;
+        this.contrasenya = contrasenya;
     }
 
     public String getNombre() { return nombre; }
@@ -30,12 +30,12 @@ public class Usuario {
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
 
-    public String getContraseña() { return contraseña; }
-    public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+    public String getContrasenya() { return contrasenya; }
+    public void setContrasenya(String contrasenyaa) { this.contrasenya = contrasenya; }
 
     @Override
     public String toString() {
         return "Usuario [nombre=" + nombre + ", email=" + email + ", numTelefono=" + numTelefono +
-                ", direccion=" + direccion + ", contraseña=" + contraseña + "]";
+                ", direccion=" + direccion + ", contraseña=" + contrasenya + "]";
     }
 }
