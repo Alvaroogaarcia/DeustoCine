@@ -8,7 +8,7 @@ public class Principal extends JFrame{
 	public Principal() {
 		// TODO Auto-generated constructor stub
 		
-		//Configuracion de la ventana
+
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setSize(500,500);
