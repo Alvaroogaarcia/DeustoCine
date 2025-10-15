@@ -1,7 +1,11 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Entidad extends Usuario {
     private String nif; 
+    private List<Descuento> descuentos = new ArrayList<>();
 
     public Entidad() {
         super(); 
@@ -25,5 +29,22 @@ public class Entidad extends Usuario {
     @Override
     public String toString() {
         return super.toString() + ", nif=" + nif;
+    }
+    
+    public void crearDescuento(int id, float porcentaje, String codigo, String descripcion) {
+        Descuento nuevo = new Descuento(id, porcentaje, codigo, descripcion);
+        descuentos.add(nuevo);
+        System.out.println("Descuento creado: " + nuevo);
+    }
+    
+    //Para saber si el descuento esta activo
+    public List<Descuento> listarDescuentos() {
+        List<Descuento> activos = new ArrayList<>();
+        for (Descuento d : descuentos) {
+            if (d.isActivo()) {
+                activos.add(d);
+            }
+        }
+        return activos;
     }
 }

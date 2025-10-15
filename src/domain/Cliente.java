@@ -26,4 +26,16 @@ public class Cliente extends Usuario {
     public String toString() {
         return super.toString() + ", fechaNacimiento=" + fechaNacimiento;
     }
+    
+    public float aplicarDescuento(Descuento descuento, float precioOriginal) {
+        if(descuento != null && descuento.isActivo()) {
+            float precioFinal = precioOriginal * (1 - descuento.getPorcentaje() / 100);
+            descuento.setActivo(false); // se marca como usado
+            System.out.println("Descuento aplicado: " + descuento.getPorcentaje() + "% -> Precio final: " + precioFinal);
+            return precioFinal;
+        } else {
+            System.out.println("Descuento no válido o ya usado.");
+            return precioOriginal;
+        }
+    }
 }
