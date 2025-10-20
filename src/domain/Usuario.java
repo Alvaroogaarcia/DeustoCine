@@ -31,7 +31,7 @@ public class Usuario {
     public void setDireccion(String direccion) { this.direccion = direccion; }
 
     public String getContrasenya() { return contrasenya; }
-    public void setContrasenya(String contrasenyaa) { this.contrasenya = contrasenya; }
+    public void setContrasenya(String contrasenya) { this.contrasenya = contrasenya; }
 
     @Override
     public String toString() {
