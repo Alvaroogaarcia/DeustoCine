@@ -2,6 +2,8 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
 public class PerfilEntidad extends JFrame {
@@ -53,6 +55,13 @@ public class PerfilEntidad extends JFrame {
         lblNif = new JLabel("NIF: ");
         add(lblNif, gbc);
         gbc.gridy++;
+        
+        JButton btnCrearPelicula = new JButton("Crear Pelicula");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(btnCrearPelicula, gbc);
 
         JButton btnCrearSesion = new JButton("Crear Sesión de Cine");
         gbc.gridx = 0;
@@ -67,6 +76,19 @@ public class PerfilEntidad extends JFrame {
 
         // Cargar datos desde el CSV
         cargarDatosEntidad(email);
+        
+     // Acción para crear pelicula (más adelante abrirá una nueva ventana)
+        btnCrearPelicula.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				CrearPelicula c = new CrearPelicula();
+				c.setVisible(true);
+				
+			}
+		});
 
         // Acción para crear sesión (más adelante abrirá una nueva ventana)
         btnCrearSesion.addActionListener(e -> {

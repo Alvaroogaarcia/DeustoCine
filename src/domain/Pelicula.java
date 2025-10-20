@@ -4,31 +4,26 @@ public class Pelicula {
     private int id;
     private String titulo;
     private int anio;
-    private int duracion; // minutos
+    private int duracion; // en minutos
     private String genero;
-    private String sinopsis;
+    private int aforo;
 
-    // Constructor vacío
+    // Constructor vacÃ­o
     public Pelicula() {}
 
-    // Constructor con todos los campos (incluyendo id)
-    public Pelicula(int id, String titulo, int anio, int duracion, String genero, String sinopsis) {
+    // Constructor con todos los campos
+    public Pelicula(int id, String titulo, int anio, int duracion, String genero, int aforo) {
         this.id = id;
         this.titulo = titulo;
         this.anio = anio;
         this.duracion = duracion;
         this.genero = genero;
-        this.sinopsis = sinopsis;
+        this.aforo = aforo;
     }
 
-    // Constructor sin id (para insertar nuevos registros)
-    public Pelicula(String titulo, int anio, int duracion, String genero, String sinopsis) {
-        this(0, titulo, anio, duracion, genero, sinopsis);
-    }
-
-    // Constructor corto sin sinopsis (comodidad)
-    public Pelicula(String titulo, int anio, int duracion, String genero) {
-        this(titulo, anio, duracion, genero, "");
+    // Constructor sin ID (por ejemplo, antes de asignarlo)
+    public Pelicula(String titulo, int anio, int duracion, String genero, int aforo) {
+        this(-1, titulo, anio, duracion, genero, aforo);
     }
 
     // Getters y setters
@@ -47,8 +42,8 @@ public class Pelicula {
     public String getGenero() { return genero; }
     public void setGenero(String genero) { this.genero = genero; }
 
-    public String getSinopsis() { return sinopsis; }
-    public void setSinopsis(String sinopsis) { this.sinopsis = sinopsis; }
+    public int getAforo() { return aforo; }
+    public void setAforo(int aforo) { this.aforo = aforo; }
 
     @Override
     public String toString() {
@@ -58,8 +53,7 @@ public class Pelicula {
                 ", anio=" + anio +
                 ", duracion=" + duracion +
                 ", genero='" + genero + '\'' +
-                (sinopsis != null && !sinopsis.isEmpty() ? ", sinopsis='" + sinopsis + '\'' : "") +
+                ", aforo=" + aforo +
                 '}';
     }
 }
-

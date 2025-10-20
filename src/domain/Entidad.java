@@ -4,47 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Entidad extends Usuario {
-    private String nif; 
-    private List<Descuento> descuentos = new ArrayList<>();
+    private String nif;
+    private List<Sesion> sesiones;
+    private List<DescuentoPelicula> descuentos; 
 
-    public Entidad() {
-        super(); 
-    }
-
-    public Entidad(String nombre, String email, String numTelefono, String direccion, String contrasenya, String nif) {
-        super(nombre, email, numTelefono, direccion, contrasenya);
-        this.nif = nif; 
-    }
-
-    // Getter
-    public String getNif() {
-        return nif;
-    }
-
-    // Setter
-    public void setNif(String nif) {
+    public Entidad(String nombre, String email, String numTelefono, String direccion, String contraseña, String nif) {
+        super(nombre, email, numTelefono, direccion, contraseña);
         this.nif = nif;
+        this.sesiones = new ArrayList<>();
+        this.descuentos = new ArrayList<>();
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + ", nif=" + nif;
-    }
-    
-    public void crearDescuento(int id, float porcentaje, String codigo, String descripcion) {
-        Descuento nuevo = new Descuento(id, porcentaje, codigo, descripcion);
-        descuentos.add(nuevo);
-        System.out.println("Descuento creado: " + nuevo);
-    }
-    
-    //Para saber si el descuento esta activo
-    public List<Descuento> listarDescuentos() {
-        List<Descuento> activos = new ArrayList<>();
-        for (Descuento d : descuentos) {
-            if (d.isActivo()) {
-                activos.add(d);
-            }
-        }
-        return activos;
-    }
+    // Métodos para sesiones
+    public void agregarSesion(Sesion sesion) { sesiones.add(sesion); }
+    public List<Sesion> getSesiones() { return sesiones; }
+
+    // Métodos para descuentos
+    public void agregarDescuento(DescuentoPelicula descuento) { descuentos.add(descuento); }
+    public List<DescuentoPelicula> getDescuentos() { return descuentos; }
+
+    public String getNif() { return nif; }
+    public void setNif(String nif) { this.nif = nif; }
 }

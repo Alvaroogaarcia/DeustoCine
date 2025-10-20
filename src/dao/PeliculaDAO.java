@@ -10,7 +10,7 @@ import java.util.List;
 public class PeliculaDAO {
 
     public void insertar(Pelicula pelicula) {
-        String sql = "INSERT INTO pelicula(titulo, anio, duracion, genero, sinopsis) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pelicula(titulo, anio, duracion, genero, aforo) VALUES (?, ?, ?, ?, ?)";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
@@ -19,20 +19,20 @@ public class PeliculaDAO {
                 pstmt.setInt(2, pelicula.getAnio());
                 pstmt.setInt(3, pelicula.getDuracion());
                 pstmt.setString(4, pelicula.getGenero());
-                pstmt.setString(5, pelicula.getSinopsis());
+                pstmt.setInt(5, pelicula.getAforo());
                 pstmt.executeUpdate();
-                System.out.println("Película insertada correctamente: " + pelicula.getTitulo());
+                System.out.println("Pelï¿½cula insertada correctamente: " + pelicula.getTitulo());
             }
         } catch (SQLException e) {
-            System.err.println("Error insertando película:");
+            System.err.println("Error insertando pelï¿½cula:");
             e.printStackTrace();
         }
-        // NO cerramos la conexión aquí
+        // NO cerramos la conexiï¿½n aquï¿½
     }
 
     public List<Pelicula> listar() {
         List<Pelicula> lista = new ArrayList<>();
-        String sql = "SELECT id, titulo, anio, duracion, genero, sinopsis FROM pelicula";
+        String sql = "SELECT id, titulo, anio, duracion, genero, aforo FROM pelicula";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
@@ -45,19 +45,19 @@ public class PeliculaDAO {
                     p.setAnio(rs.getInt("anio"));
                     p.setDuracion(rs.getInt("duracion"));
                     p.setGenero(rs.getString("genero"));
-                    p.setSinopsis(rs.getString("sinopsis"));
+                    p.setAforo(rs.getInt("aforo"));
                     lista.add(p);
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error listando películas:");
+            System.err.println("Error listando pelï¿½culas:");
             e.printStackTrace();
         }
         return lista;
     }
 
     public Pelicula buscarPorId(int id) {
-        String sql = "SELECT id, titulo, anio, duracion, genero, sinopsis FROM pelicula WHERE id = ?";
+        String sql = "SELECT id, titulo, anio, duracion, genero, aforo FROM pelicula WHERE id = ?";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
@@ -71,7 +71,7 @@ public class PeliculaDAO {
                         p.setAnio(rs.getInt("anio"));
                         p.setDuracion(rs.getInt("duracion"));
                         p.setGenero(rs.getString("genero"));
-                        p.setSinopsis(rs.getString("sinopsis"));
+                        p.setAforo(rs.getInt("aforo"));
                         return p;
                     }
                 }
@@ -83,7 +83,7 @@ public class PeliculaDAO {
     }
 
     public void actualizar(Pelicula pelicula) {
-        String sql = "UPDATE pelicula SET titulo=?, anio=?, duracion=?, genero=?, sinopsis=? WHERE id=?";
+        String sql = "UPDATE pelicula SET titulo=?, anio=?, duracion=?, genero=?, aforo=? WHERE id=?";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
@@ -92,10 +92,10 @@ public class PeliculaDAO {
                 ps.setInt(2, pelicula.getAnio());
                 ps.setInt(3, pelicula.getDuracion());
                 ps.setString(4, pelicula.getGenero());
-                ps.setString(5, pelicula.getSinopsis());
+                ps.setInt(5, pelicula.getAforo());
                 ps.setInt(6, pelicula.getId());
                 ps.executeUpdate();
-                System.out.println("Película actualizada: " + pelicula.getTitulo());
+                System.out.println("Pelï¿½cula actualizada: " + pelicula.getTitulo());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,7 +110,7 @@ public class PeliculaDAO {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, id);
                 ps.executeUpdate();
-                System.out.println("Película eliminada con id=" + id);
+                System.out.println("Pelï¿½cula eliminada con id=" + id);
             }
         } catch (SQLException e) {
             e.printStackTrace();

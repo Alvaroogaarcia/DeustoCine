@@ -7,8 +7,8 @@ public class Cliente extends Usuario {
         super();
     }
 
-    public Cliente(String nombre, String email, String numTelefono, String direccion, String contrasenya, String fechaNacimiento) {
-        super(nombre, email, numTelefono, direccion, contrasenya);
+    public Cliente(String nombre, String email, String numTelefono, String direccion, String contrasena, String fechaNacimiento) {
+        super(nombre, email, numTelefono, direccion, contrasena);
         this.fechaNacimiento = fechaNacimiento; // 🔑 asignar el valor
     }
 
@@ -26,15 +26,15 @@ public class Cliente extends Usuario {
     public String toString() {
         return super.toString() + ", fechaNacimiento=" + fechaNacimiento;
     }
-    
-    public float aplicarDescuento(Descuento descuento, float precioOriginal) {
-        if(descuento != null && descuento.isActivo()) {
-            float precioFinal = precioOriginal * (1 - descuento.getPorcentaje() / 100);
-            descuento.setActivo(false); // se marca como usado
+
+    // Método para aplicar descuento
+    public float aplicarDescuento(DescuentoPelicula descuento, float precioOriginal) {
+        if (descuento != null) {
+            float precioFinal = precioOriginal * (1 - (float) descuento.getPorcentaje() / 100);
             System.out.println("Descuento aplicado: " + descuento.getPorcentaje() + "% -> Precio final: " + precioFinal);
             return precioFinal;
         } else {
-            System.out.println("Descuento no válido o ya usado.");
+            System.out.println("Descuento no válido.");
             return precioOriginal;
         }
     }
