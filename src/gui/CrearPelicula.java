@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,57 +12,122 @@ import database.DBConnection;
 public class CrearPelicula extends JFrame {
 
     private JTextField txtTitulo, txtAnio, txtDuracion, txtGenero, txtAforo;
+    private JLabel lblImagenPreview;
+    private String rutaImagenSeleccionada = null;
 
     public CrearPelicula() {
         setTitle("Crear Película");
-        setSize(400, 350);
+        setSize(450, 500);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
-        gbc.gridx = 0; gbc.gridy = 0;
-        add(new JLabel("Título:"), gbc);
+        // --- Campo Título ---
+        JLabel lblTitulo = new JLabel("Título:");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(lblTitulo, gbc);
         txtTitulo = new JTextField(20);
-        gbc.gridx = 1; add(txtTitulo, gbc);
+        gbc.gridx = 1;
+        add(txtTitulo, gbc);
 
-        // Año
-        gbc.gridx = 0; gbc.gridy = 1;
-        add(new JLabel("Año:"), gbc);
+        // --- Campo Año ---
+        JLabel lblAnio = new JLabel("Año:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(lblAnio, gbc);
         txtAnio = new JTextField(20);
-        gbc.gridx = 1; add(txtAnio, gbc);
+        gbc.gridx = 1;
+        add(txtAnio, gbc);
 
-        // Duración
-        gbc.gridx = 0; gbc.gridy = 2;
-        add(new JLabel("Duración (minutos):"), gbc);
+        // --- Campo Duración ---
+        JLabel lblDuracion = new JLabel("Duración (min):");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(lblDuracion, gbc);
         txtDuracion = new JTextField(20);
-        gbc.gridx = 1; add(txtDuracion, gbc);
+        gbc.gridx = 1;
+        add(txtDuracion, gbc);
 
-        // Género
-        gbc.gridx = 0; gbc.gridy = 3;
-        add(new JLabel("Género:"), gbc);
+        // --- Campo Género ---
+        JLabel lblGenero = new JLabel("Género:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(lblGenero, gbc);
         txtGenero = new JTextField(20);
-        gbc.gridx = 1; add(txtGenero, gbc);
+        gbc.gridx = 1;
+        add(txtGenero, gbc);
 
-        // Aforo
-        gbc.gridx = 0; gbc.gridy = 4;
-        add(new JLabel("Aforo:"), gbc);
+        // --- Campo Aforo ---
+        JLabel lblAforo = new JLabel("Aforo:");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        add(lblAforo, gbc);
         txtAforo = new JTextField(20);
-        gbc.gridx = 1; add(txtAforo, gbc);
+        gbc.gridx = 1;
+        add(txtAforo, gbc);
 
-        // Botón Crear
+        // --- Imagen ---
+        JLabel lblImagen = new JLabel("Imagen:");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        add(lblImagen, gbc);
+
+        JButton btnSeleccionarImagen = new JButton("Seleccionar Imagen...");
+        gbc.gridx = 1;
+        add(btnSeleccionarImagen, gbc);
+
+        lblImagenPreview = new JLabel();
+        lblImagenPreview.setPreferredSize(new Dimension(150, 200));
+        lblImagenPreview.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        lblImagenPreview.setHorizontalAlignment(SwingConstants.CENTER);
+        lblImagenPreview.setText("Sin imagen");
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        add(lblImagenPreview, gbc);
+
+        btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
+
+        // --- Botón Crear ---
         JButton btnCrear = new JButton("Crear Película");
-        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.gridx = 1;
+        gbc.gridy = 7;
         add(btnCrear, gbc);
 
         btnCrear.addActionListener(e -> crearPelicula());
     }
 
+    /**
+     * Permite seleccionar una imagen y muestra una vista previa
+     */
+    private void seleccionarImagen() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccionar imagen");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                "Imágenes (*.jpg, *.png, *.jpeg)", "jpg", "png", "jpeg"));
+
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivoSeleccionado = fileChooser.getSelectedFile();
+            rutaImagenSeleccionada = archivoSeleccionado.getAbsolutePath();
+
+            // Mostrar vista previa escalada
+            ImageIcon iconoOriginal = new ImageIcon(rutaImagenSeleccionada);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(
+                    lblImagenPreview.getWidth(), lblImagenPreview.getHeight(), Image.SCALE_SMOOTH);
+            lblImagenPreview.setIcon(new ImageIcon(imagenEscalada));
+            lblImagenPreview.setText("");
+        }
+    }
+
+    /**
+     * Inserta la película en la base de datos
+     */
     private void crearPelicula() {
         String titulo = txtTitulo.getText().trim();
         String anioStr = txtAnio.getText().trim();
@@ -84,7 +150,7 @@ public class CrearPelicula extends JFrame {
             return;
         }
 
-        String sql = "INSERT INTO pelicula (titulo, anio, duracion, genero, aforo) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pelicula (titulo, anio, duracion, genero, aforo, imagen) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -93,9 +159,11 @@ public class CrearPelicula extends JFrame {
             ps.setInt(3, duracion);
             ps.setString(4, genero);
             ps.setInt(5, aforo);
-            ps.executeUpdate();
+            ps.setString(6, rutaImagenSeleccionada);
 
-            JOptionPane.showMessageDialog(this, "Película creada con éxito");
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Película creada con éxito 🎬");
+
             limpiarCampos();
 
         } catch (SQLException e) {
@@ -110,9 +178,12 @@ public class CrearPelicula extends JFrame {
         txtDuracion.setText("");
         txtGenero.setText("");
         txtAforo.setText("");
+        lblImagenPreview.setIcon(null);
+        lblImagenPreview.setText("Sin imagen");
+        rutaImagenSeleccionada = null;
     }
 
     public static void main(String[] args) {
-        new CrearPelicula().setVisible(true);
+        SwingUtilities.invokeLater(() -> new CrearPelicula().setVisible(true));
     }
 }
