@@ -35,8 +35,22 @@ public class DBInitializer {
                 " sinopsis TEXT" +
                 ");"
             );
+            
+            // Tabla descuento
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS descuento (" +
+                " id TEXT PRIMARY KEY," +
+                " codigo TEXT NOT NULL UNIQUE," +
+                " porcentaje REAL NOT NULL" +
+                ");"
+            );
 
-            System.out.println("Tablas creadas (si no existían).");
+            
+
+            
+            
+
+            System.out.println("Tablas creadas (si no existï¿½an).");
 
         } catch (SQLException e) {
             System.err.println("Error inicializando la BD:");
@@ -44,7 +58,7 @@ public class DBInitializer {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                // NO cerramos la conexión aquí — será cerrada al final del programa
+                // NO cerramos la conexiï¿½n aquï¿½ ï¿½ serï¿½ cerrada al final del programa
             } catch (SQLException e) {
                 e.printStackTrace();
             }
