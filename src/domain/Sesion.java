@@ -1,44 +1,39 @@
 package domain;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Sesion {
-    private String idSesion;
-    private LocalDate fecha;
+    private int id;
+    private int idPelicula;
+    private String fecha;  
+    private String hora;   
     private String sala;
-    private List<Pelicula> peliculas;
 
-    public Sesion(String idSesion, LocalDate fecha, String sala) {
-        this.idSesion = idSesion;
+    public Sesion() {}
+
+    public Sesion(int idPelicula, String fecha, String hora, String sala) {
+        this.idPelicula = idPelicula;
         this.fecha = fecha;
+        this.hora = hora;
         this.sala = sala;
-        this.peliculas = new ArrayList<>();
     }
 
-    public String getIdSesion() {
-        return idSesion;
-    }
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public LocalDate getFecha() {
-        return fecha;
-    }
+    public int getIdPelicula() { return idPelicula; }
+    public void setIdPelicula(int idPelicula) { this.idPelicula = idPelicula; }
 
-    public String getSala() {
-        return sala;
-    }
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
 
-    public List<Pelicula> getPeliculas() {
-        return peliculas;
-    }
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
 
-    public void agregarPelicula(Pelicula pelicula) {
-        peliculas.add(pelicula);
-    }
+    public String getSala() { return sala; }
+    public void setSala(String sala) { this.sala = sala; }
 
     @Override
     public String toString() {
-        return "Sesión [" + fecha + " - " + sala + " - " + peliculas.size() + " películas]";
+        return "Sesión [película=" + idPelicula + ", fecha=" + fecha + ", hora=" + hora + ", sala=" + sala + "]";
     }
 }
