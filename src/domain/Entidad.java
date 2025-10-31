@@ -7,6 +7,10 @@ public class Entidad extends Usuario {
     private String nif;
     private List<Sesion> sesiones;
     private List<DescuentoPelicula> descuentos; 
+    
+    public Entidad(String nif) {
+    	this.nif = nif;
+    }
 
     public Entidad(String nombre, String email, String numTelefono, String direccion, String contraseña, String nif) {
         super(nombre, email, numTelefono, direccion, contraseña);

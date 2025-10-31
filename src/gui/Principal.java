@@ -3,22 +3,31 @@ package gui;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-public class Principal extends JFrame{
+import domain.Usuario;
 
-	public Principal() {
+import java.awt.BorderLayout;
+import javax.swing.JMenuBar;
+
+public class Principal extends JFrame{
+	
+	private Usuario u;
+
+	public Principal(Usuario u) {
 		// TODO Auto-generated constructor stub
-		
+		this.u = u;
 
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setSize(500,500);
 		this.setTitle("Deusto Cine - Principal");
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
 		
 	}
 	
-	public static void main(String[] args) {
-        Principal p = new Principal();
-        p.setVisible(true);
-    }
+	
+	
 
 }

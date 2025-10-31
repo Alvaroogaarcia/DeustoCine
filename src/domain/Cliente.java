@@ -1,25 +1,28 @@
 package domain;
 
-public class Cliente extends Usuario {
-    private String fechaNacimiento; // Puedes usar String o LocalDate
+import java.time.LocalDate;
 
-    public Cliente() {
+public class Cliente extends Usuario {
+    private LocalDate fechaNacimiento; // Puedes usar String o LocalDate
+
+    public Cliente(LocalDate fechaNacimiento) {
         super();
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     public Cliente(String nombre, String email, String numTelefono, String direccion, String contrasena, String fechaNacimiento) {
         super(nombre, email, numTelefono, direccion, contrasena);
-        this.fechaNacimiento = fechaNacimiento; // 🔑 asignar el valor
+        this.fechaNacimiento = LocalDate.parse(fechaNacimiento); // 🔑 asignar el valor
     }
 
     // Getter
     public String getFechaNacimiento() {
-        return fechaNacimiento;
+        return fechaNacimiento.toString();
     }
 
     // Setter
     public void setFechaNacimiento(String fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+        this.fechaNacimiento = LocalDate.parse(fechaNacimiento);
     }
 
     @Override

@@ -1,6 +1,10 @@
 package gui;
 
 import javax.swing.*;
+
+import domain.Entidad;
+import domain.Usuario;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,10 +13,12 @@ import java.io.*;
 public class PerfilEntidad extends JFrame {
     
     private String emailEntidad;
+    private Entidad entidad;
     private JLabel lblNombre, lblEmail, lblTelefono, lblDireccion, lblNif;
 
-    public PerfilEntidad(String email) {
-        this.emailEntidad = email;
+    public PerfilEntidad(Entidad entidad) {
+        this.emailEntidad = entidad.getEmail();
+        this.entidad =  entidad;
 
         // Configuración de la ventana
         setTitle("Deusto Cine - Perfil Entidad");
@@ -81,8 +87,8 @@ public class PerfilEntidad extends JFrame {
         gbc.gridy++;
         add(btnCerrarSesion, gbc);
 
-        // Cargar datos desde el CSV
-        cargarDatosEntidad(email);
+        // Cargar datos desde la BD
+        cargarDatosEntidad();
         
      // Acción para crear pelicula 
         btnCrearPelicula.addActionListener(new ActionListener() {
@@ -118,35 +124,42 @@ public class PerfilEntidad extends JFrame {
             new Login().setVisible(true);
         });
     }
-
-    private void cargarDatosEntidad(String email) {
-        File file = new File("resources/data/entidades.csv");
-        if (!file.exists()) {
-            JOptionPane.showMessageDialog(this, "No se encontró el archivo de entidades.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(";");
-                if (datos.length >= 6 && datos[2].equals(email)) {
-                    lblNombre.setText("Nombre: " + datos[0]);
-                    lblEmail.setText("Email: " + datos[2]);
-                    lblTelefono.setText("Teléfono: " + datos[3]);
-                    lblDireccion.setText("Dirección: " + datos[4]);
-                    lblNif.setText("NIF: " + datos[5]);
-                    return;
-                }
-            }
-            JOptionPane.showMessageDialog(this, "No se encontraron datos para esta entidad.", "Aviso", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    
+    private void cargarDatosEntidad() {
+    	lblNombre.setText("Nombre: " + entidad.getNombre());
+      lblEmail.setText("Email: " + entidad.getEmail());
+      lblTelefono.setText("Teléfono: " + entidad.getNumTelefono());
+      lblDireccion.setText("Dirección: " + entidad.getDireccion());
+      lblNif.setText("NIF: " + entidad.getNif());
+      return;
     }
 
-    // Método main solo para pruebas
-    public static void main(String[] args) {
-        new PerfilEntidad("ejemplo@cine.com").setVisible(true);
-    }
+//    private void cargarDatosEntidad(String email) {
+//        File file = new File("resources/data/entidades.csv");
+//        if (!file.exists()) {
+//            JOptionPane.showMessageDialog(this, "No se encontró el archivo de entidades.", "Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//
+//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//            String linea;
+//            while ((linea = br.readLine()) != null) {
+//                String[] datos = linea.split(";");
+//                if (datos.length >= 6 && datos[2].equals(email)) {
+//                    lblNombre.setText("Nombre: " + datos[0]);
+//                    lblEmail.setText("Email: " + datos[2]);
+//                    lblTelefono.setText("Teléfono: " + datos[3]);
+//                    lblDireccion.setText("Dirección: " + datos[4]);
+//                    lblNif.setText("NIF: " + datos[5]);
+//                    return;
+//                }
+//            }
+//            JOptionPane.showMessageDialog(this, "No se encontraron datos para esta entidad.", "Aviso", JOptionPane.WARNING_MESSAGE);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+   
+
 }

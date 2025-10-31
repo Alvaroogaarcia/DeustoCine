@@ -1,6 +1,6 @@
 package domain;
 
-public class Usuario {
+public abstract class Usuario {
     private String nombre;
     private String email;
     private String numTelefono;

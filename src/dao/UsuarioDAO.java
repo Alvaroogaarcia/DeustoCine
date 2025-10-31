@@ -1,9 +1,12 @@
 package dao;
 
 import database.DBConnection;
+import domain.Cliente;
+import domain.Entidad;
 import domain.Usuario;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,19 +41,43 @@ public class UsuarioDAO {
             System.err.println("⚠️ El email ya existe: " + usuario.getEmail());
             return false; // no insertado
         }
-
-        String sql = "INSERT INTO usuario(nombre, email, numTelefono, direccion, contrasenya) VALUES (?, ?, ?, ?, ?)";
+        
+        boolean isCliente = usuario instanceof Cliente;
+        
+        if (isCliente) {
+        	return insertarCliente( (Cliente)usuario);
+        }
+        
+        boolean isEntidad = usuario instanceof Entidad;
+        
+        if (isEntidad) {
+        	return insertarEntidad( (Entidad)usuario);
+        }
+        
+//        if (isTrabajador) {
+//        	return insertarTrabajador( (Trabajdor)usuario);
+//        }
+        
+        return false;
+        
+    }
+    
+    
+    public boolean insertarCliente (Cliente cliente) {
+    	
+    	String sql = "INSERT INTO usuario(nombre, email, numTelefono, direccion, contrasenya, fechaNacimiento) VALUES (?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, usuario.getNombre());
-                ps.setString(2, usuario.getEmail());
-                ps.setString(3, usuario.getNumTelefono());
-                ps.setString(4, usuario.getDireccion());
-                ps.setString(5, usuario.getContrasenya());
+                ps.setString(1, cliente.getNombre());
+                ps.setString(2, cliente.getEmail());
+                ps.setString(3, cliente.getNumTelefono());
+                ps.setString(4, cliente.getDireccion());
+                ps.setString(5, cliente.getContrasenya());
+                ps.setString(6, cliente.getFechaNacimiento());
                 ps.executeUpdate();
-                System.out.println("Usuario insertado correctamente: " + usuario.getNombre());
+                System.out.println("Usuario insertado correctamente: " + cliente.getNombre());
                 return true;
             }
         } catch (SQLException e) {
@@ -58,18 +85,55 @@ public class UsuarioDAO {
             e.printStackTrace();
             return false;
         }
+    	
     }
+    
+    public boolean insertarEntidad (Entidad entidad) {
+    	
+    	String sql = "INSERT INTO usuario(nombre, email, numTelefono, direccion, contrasenya, nif) VALUES (?, ?, ?, ?, ?, ?)";
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, entidad.getNombre());
+                ps.setString(2, entidad.getEmail());
+                ps.setString(3, entidad.getNumTelefono());
+                ps.setString(4, entidad.getDireccion());
+                ps.setString(5, entidad.getContrasenya());
+                ps.setString(6, entidad.getNif());
+                ps.executeUpdate();
+                System.out.println("Usuario insertado correctamente: " + entidad.getNombre());
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error insertando usuario:");
+            e.printStackTrace();
+            return false;
+        }
+    	
+    }
+    
+ 
 
     public List<Usuario> listar() {
         List<Usuario> lista = new ArrayList<>();
-        String sql = "SELECT nombre, email, numTelefono, direccion, contrasenya FROM usuario";
+        String sql = "SELECT nombre, email, numTelefono, direccion, contrasenya, nif, fechaNacimiento FROM usuario";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
             try (Statement st = conn.createStatement();
                  ResultSet rs = st.executeQuery(sql)) {
                 while (rs.next()) {
-                    Usuario u = new Usuario();
+                	Usuario u = null;
+                	
+                	String nif = rs.getString("nif");
+                	if (nif == null || nif == "") {
+                		u = new Entidad(nif);
+                	}else {
+                		u = new Cliente(LocalDate.parse(rs.getString("fechaNacimiento")));
+                	}
+                	
+                	
                     u.setNombre(rs.getString("nombre"));
                     u.setEmail(rs.getString("email"));
                     u.setNumTelefono(rs.getString("numTelefono"));
@@ -85,7 +149,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorEmail(String email) {
-        String sql = "SELECT nombre, email, numTelefono, direccion, contrasenya FROM usuario WHERE email = ?";
+        String sql = "SELECT nombre, email, numTelefono, direccion, contrasenya, nif, fechaNacimiento  FROM usuario WHERE email = ?";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
@@ -93,7 +157,16 @@ public class UsuarioDAO {
                 ps.setString(1, email);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        Usuario u = new Usuario();
+                    	Usuario u = null;
+                    	
+                    	String nif = rs.getString("nif");
+                    	if (nif == null || nif == "") {
+                    		u = new Cliente(LocalDate.parse(rs.getString("fechaNacimiento")));
+                    	}else {
+                    		u = new Entidad(nif);
+                    	}
+                    	
+                    	
                         u.setNombre(rs.getString("nombre"));
                         u.setEmail(rs.getString("email"));
                         u.setNumTelefono(rs.getString("numTelefono"));

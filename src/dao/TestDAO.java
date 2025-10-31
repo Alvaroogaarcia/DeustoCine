@@ -2,6 +2,7 @@ package dao;
 
 import database.DBConnection;
 import database.DBInitializer;
+import domain.Cliente;
 import domain.Pelicula;
 import domain.Usuario;
 
@@ -26,7 +27,7 @@ public class TestDAO {
             pdao.insertar(p1);
 
             // Insertar usuario (comprueba si ya existe)
-            Usuario u1 = new Usuario("Juan", "juan@example.com", "600123456", "Calle Falsa 123", "1234");
+            Usuario u1 = new Cliente("Juan", "juan@example.com", "600123456", "Calle Falsa 123", "1234", "2025-10-31");
             boolean inserted = udao.insertar(u1);
             if (!inserted) {
                 System.out.println("No se insert� el usuario (posible duplicado).");

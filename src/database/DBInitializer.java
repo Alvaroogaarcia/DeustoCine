@@ -14,14 +14,24 @@ public class DBInitializer {
             stmt = conn.createStatement();
 
             // Tabla usuario (con UNIQUE en email)
+         // Tabla usuario
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS usuario (" +
                 " nombre TEXT NOT NULL," +
                 " email TEXT NOT NULL UNIQUE," +
                 " numTelefono TEXT," +
                 " direccion TEXT," +
-                " contrasenya TEXT" +
+                " contrasenya TEXT," +
+                " nif TEXT," +
+                " fechaNacimiento TEXT" +
                 ");"
+            );
+
+            // Insertar dos usuarios entidad (empresa)
+            stmt.executeUpdate(
+                "INSERT OR IGNORE INTO usuario (nombre, email, numTelefono, direccion, contrasenya, nif, fechaNacimiento) VALUES " +
+                "('Empresa CineDeusto SA', 'contacto@cineempresa.com', '944123456', 'Bilbao', '1234', 'A12345678', NULL), " +
+                "('Servicios Culturales Donosti SL', 'info@servcultural.com', '943987654', 'San Sebastián', '1234', 'B87654321', NULL);"
             );
 
             // Tabla pelicula

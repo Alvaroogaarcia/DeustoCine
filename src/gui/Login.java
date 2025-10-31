@@ -1,6 +1,13 @@
 package gui;
 
 import javax.swing.*;
+
+import dao.UsuarioDAO;
+import database.DBInitializer;
+import domain.Cliente;
+import domain.Entidad;
+import domain.Usuario;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -72,16 +79,17 @@ public class Login extends JFrame {
                 return;
             }
 
-            String filePath = tipo.equals("Cliente") ? "resources/data/usuarios.csv" : "resources/data/entidades.csv";
-
-            if (login(filePath, email, password)) {
+           // String filePath = tipo.equals("Cliente") ? "resources/data/usuarios.csv" : "resources/data/entidades.csv";
+            Usuario u = loginBD( email, password);
+            if (u != null) {
                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso como " + tipo + ".");
                 dispose();
 
-                if (tipo.equals("Cliente")) {
-                    new PerfilCliente(email).setVisible(true);
+                if (u instanceof Cliente){
+//                    new PerfilCliente(email).setVisible(true);
+                	new Principal(u).setVisible(true);
                 } else {
-                    new PerfilEntidad(email).setVisible(true);
+                    new PerfilEntidad((Entidad)u).setVisible(true);
                 }
 
             } else {
@@ -100,6 +108,17 @@ public class Login extends JFrame {
             }
         });
     }
+    
+    private Usuario loginBD(String email, String password) {
+        UsuarioDAO dao = new UsuarioDAO();
+        Usuario u = dao.buscarPorEmail(email);
+
+        if (u == null) return null;
+
+     
+        return u.getContrasenya().equals(password)? u : null;
+    }
+
 
     private boolean login(String filePath, String email, String password) {
         File file = new File(filePath);
@@ -124,6 +143,19 @@ public class Login extends JFrame {
     }
 
     public static void main(String[] args) {
+        String dbPath = "resources/data/deustocine.sqlite";
+        File dbFile = new File(dbPath);
+
+        // Si NO existe la BD -> inicializamos
+        if (!dbFile.exists()) {
+            System.out.println("Base de datos no encontrada. Creando...");
+            DBInitializer.initialize();
+        } else {
+            System.out.println("Base de datos encontrada");
+        }
+
+        // Mostrar login
         new Login().setVisible(true);
     }
+
 }
