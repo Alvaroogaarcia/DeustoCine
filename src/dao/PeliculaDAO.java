@@ -24,7 +24,7 @@ public class PeliculaDAO {
                 System.out.println("Pel�cula insertada correctamente: " + pelicula.getTitulo());
             }
         } catch (SQLException e) {
-            System.err.println("Error insertando pel�cula:");
+            System.err.println("Error insertando película:");
             e.printStackTrace();
         }
         // NO cerramos la conexi�n aqu�
