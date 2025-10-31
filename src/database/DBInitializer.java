@@ -35,8 +35,92 @@ public class DBInitializer {
                 " sinopsis TEXT" +
                 ");"
             );
+            
+            // Tabla sesiÃ³n
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS sesion (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " id_pelicula INTEGER NOT NULL," +
+                " fecha TEXT NOT NULL," +
+                " hora TEXT NOT NULL," +
+                " sala TEXT NOT NULL," +
+                " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
+                ");"
+            );
 
-            System.out.println("Tablas creadas (si no existían).");
+            
+            // Tabla descuento
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS descuento (" +
+                " id TEXT PRIMARY KEY," +
+                " codigo TEXT NOT NULL UNIQUE," +
+                " porcentaje REAL NOT NULL" +
+                ");"
+            );
+            
+            // Tabla entrada
+            stmt.executeUpdate(
+            	"CREATE TABLE IF NOT EXISTS entrada (" +
+            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            	" id_sesion INTEGER NOT NULL," +
+            	" fila INTEGER," +
+            	" butaca INTEGER," +
+            	" estado TEXT NOT NULL DEFAULT 'LIBRE'," + 
+            	" UNIQUE(id_sesion, fila, butaca)," +
+            	" FOREIGN KEY(id_sesion) REFERENCES sesion(id)" +
+            	");"
+            );
+
+
+            // Tabla compra/reserva
+            stmt.executeUpdate(
+            	"CREATE TABLE IF NOT EXISTS compra (" +
+            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            	" email_usuario TEXT NOT NULL," + 
+            	" id_entrada INTEGER NOT NULL," +
+            	" estado TEXT NOT NULL DEFAULT 'RESERVADA'," + 
+            	" creado_en INTEGER NOT NULL," + 
+            	" expira_en INTEGER NOT NULL," +
+            	" UNIQUE(id_entrada) ON CONFLICT IGNORE," + 
+            	" FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
+            	");"
+            );
+
+
+            // Tabla valoracion
+            stmt.executeUpdate(
+            	"CREATE TABLE IF NOT EXISTS valoracion (" +
+            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            	" email_usuario TEXT NOT NULL," +
+            	" id_pelicula INTEGER NOT NULL," +
+            	" puntuacion INTEGER NOT NULL," + 
+            	" comentario TEXT," +
+            	" fecha INTEGER NOT NULL," + 
+            	" UNIQUE(email_usuario, id_pelicula)," +
+            	" FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
+            	");"
+            );
+
+
+            // Tabla reventa
+            stmt.executeUpdate(
+            	"CREATE TABLE IF NOT EXISTS reventa (" +
+            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            	" id_entrada INTEGER NOT NULL," +
+            	" vendedor_email TEXT NOT NULL," +
+            	" precio REAL NOT NULL," +
+            	" estado TEXT NOT NULL DEFAULT 'ACTIVA'," + 
+            	" creado_en INTEGER NOT NULL," +
+            	" FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
+            	");"
+            );
+
+            
+
+            
+            
+
+            System.out.println("Tablas creadas (si no existï¿½an).");
 
         } catch (SQLException e) {
             System.err.println("Error inicializando la BD:");
@@ -44,7 +128,7 @@ public class DBInitializer {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                // NO cerramos la conexión aquí — será cerrada al final del programa
+                // NO cerramos la conexiï¿½n aquï¿½ ï¿½ serï¿½ cerrada al final del programa
             } catch (SQLException e) {
                 e.printStackTrace();
             }

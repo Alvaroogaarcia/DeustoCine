@@ -4,29 +4,28 @@ public class Pelicula {
     private int id;
     private String titulo;
     private int anio;
-    private int duracion; // en minutos
+    private int duracion; // minutos
     private String genero;
     private int aforo;
+    private String imagen; 
 
-    // Constructor vacío
     public Pelicula() {}
 
-    // Constructor con todos los campos
-    public Pelicula(int id, String titulo, int anio, int duracion, String genero, int aforo) {
+    public Pelicula(int id, String titulo, int anio, int duracion, String genero, int aforo, String imagen) {
         this.id = id;
         this.titulo = titulo;
         this.anio = anio;
         this.duracion = duracion;
         this.genero = genero;
         this.aforo = aforo;
+        this.imagen = imagen;
     }
 
-    // Constructor sin ID (por ejemplo, antes de asignarlo)
-    public Pelicula(String titulo, int anio, int duracion, String genero, int aforo) {
-        this(-1, titulo, anio, duracion, genero, aforo);
+    public Pelicula(String titulo, int anio, int duracion, String genero, int aforo, String imagen) {
+        this(0, titulo, anio, duracion, genero, aforo, imagen);
     }
 
-    // Getters y setters
+    // Getters y Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -45,6 +44,9 @@ public class Pelicula {
     public int getAforo() { return aforo; }
     public void setAforo(int aforo) { this.aforo = aforo; }
 
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
+
     @Override
     public String toString() {
         return "Pelicula{" +
@@ -54,6 +56,7 @@ public class Pelicula {
                 ", duracion=" + duracion +
                 ", genero='" + genero + '\'' +
                 ", aforo=" + aforo +
+                ", imagen='" + imagen + '\'' +
                 '}';
     }
 }
