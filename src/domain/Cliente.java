@@ -3,7 +3,7 @@ package domain;
 import java.time.LocalDate;
 
 public class Cliente extends Usuario {
-    private LocalDate fechaNacimiento; // Puedes usar String o LocalDate
+    private LocalDate fechaNacimiento; 
 
     public Cliente(LocalDate fechaNacimiento) {
         super();
@@ -12,7 +12,7 @@ public class Cliente extends Usuario {
 
     public Cliente(String nombre, String email, String numTelefono, String direccion, String contrasena, String fechaNacimiento) {
         super(nombre, email, numTelefono, direccion, contrasena);
-        this.fechaNacimiento = LocalDate.parse(fechaNacimiento); // 🔑 asignar el valor
+        this.fechaNacimiento = LocalDate.parse(fechaNacimiento); 
     }
 
     // Getter

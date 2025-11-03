@@ -6,15 +6,23 @@ import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
+import dao.UsuarioDAO;
+import domain.Cliente;
+
 import javax.swing.SpinnerDateModel;
 
 public class Registro extends JFrame {
+	
+	private JPanel panel;
 
     public Registro() {
         // Configuración de la ventana
@@ -24,7 +32,7 @@ public class Registro extends JFrame {
         this.setTitle("Deusto Cine - Registro de Usuario");
         this.setResizable(false);
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -99,7 +107,12 @@ public class Registro extends JFrame {
             String postalCode = txtCodigoPostal.getText().trim();
             String password = new String(txtContrasenya.getPassword());
             String confirmPassword = new String(txtConfirmarContrasenya.getPassword());
-            Date birthDate = (Date) spinnerNacimiento.getValue();
+            Date date = (Date) spinnerNacimiento.getValue();
+
+            LocalDate birthDate = date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
 
             // Validaciones básicas
             if (username.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() ||
@@ -118,8 +131,8 @@ public class Registro extends JFrame {
                 return;
             }
 
-            if (!phone.matches("\\d{10,}")) {
-                JOptionPane.showMessageDialog(panel, "El número de teléfono debe contener al menos 10 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (!phone.matches("\\d{9,}")) {
+                JOptionPane.showMessageDialog(panel, "El número de teléfono debe contener al menos 9 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -131,9 +144,8 @@ public class Registro extends JFrame {
             }
 
             // Calcular edad
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(birthDate);
-            int year = cal.get(Calendar.YEAR);
+          
+            int year = LocalDate.now().getYear();
             int age = Calendar.getInstance().get(Calendar.YEAR) - year;
 
             if (age < 18) {
@@ -142,7 +154,7 @@ public class Registro extends JFrame {
             } else {
                 // Mayor de edad → guardar directo
                 registerUser(username, password, email, phone, address, postalCode, birthDate);
-                JOptionPane.showMessageDialog(panel, "Cuenta creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                
                 dispose();
                 new Login().setVisible(true);
             }
@@ -150,24 +162,40 @@ public class Registro extends JFrame {
     }
 
     // Guardar usuario en CSV
-    private void registerUser(String username, String password, String email, String phone, String address, String postalCode, Date birthDate) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("resources/data/usuarios.csv", true))) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(birthDate);
-            String fechaStr = String.format("%02d-%02d-%04d", cal.get(Calendar.DAY_OF_MONTH),
-                    cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
-
-            bw.write(username + ";" + password + ";" + email + ";" + phone + ";" + address + ";" + postalCode + ";" + fechaStr);
-            bw.newLine();
-            bw.flush();
-            System.out.println("Usuario guardado en CSV");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void registerUser(String username, String password, String email, String phone, String address, String postalCode, LocalDate birthDate) {
+//        try (BufferedWriter bw = new BufferedWriter(new FileWriter("resources/data/usuarios.csv", true))) {
+//            Calendar cal = Calendar.getInstance();
+//            cal.setTime(birthDate);
+//            String fechaStr = String.format("%02d-%02d-%04d", cal.get(Calendar.DAY_OF_MONTH),
+//                    cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
+//
+//            bw.write(username + ";" + password + ";" + email + ";" + phone + ";" + address + ";" + postalCode + ";" + fechaStr);
+//            bw.newLine();
+//            bw.flush();
+//            System.out.println("Usuario guardado en CSV");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//            Calendar cal = Calendar.getInstance();
+//    	String fechaStr = String.format("%02d-%02d-%04d", cal.get(Calendar.DAY_OF_MONTH),
+//    			   cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
+    	
+    	Cliente cliente = new Cliente(username, email,  phone, address+";"+postalCode,  password,  birthDate.toString());
+    	UsuarioDAO uDao = new UsuarioDAO();
+    	boolean resultado = uDao.insertar(cliente);
+    	
+    	if (resultado == true) {
+    		JOptionPane.showMessageDialog(panel, "Cuenta creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    	}else {
+    		JOptionPane.showMessageDialog(panel, "Error al crear la cuenta.", "Fallo", JOptionPane.WARNING_MESSAGE);
+    	}
+    	
+    	
+    	
     }
 
     // Diálogo de consentimiento para menores
-    private void showConsentDialog(String username, String password, String email, String phone, String address, String postalCode, Date birthDate) {
+    private void showConsentDialog(String username, String password, String email, String phone, String address, String postalCode, LocalDate birthDate) {
         JDialog consentDialog = new JDialog(this, "Consentimiento del Tutor Legal", true);
         consentDialog.setSize(600, 220);
         consentDialog.setLayout(new BorderLayout());
