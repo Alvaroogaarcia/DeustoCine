@@ -75,6 +75,13 @@ public class PerfilEntidad extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(btnCrearSesion, gbc);
+        
+        JButton btnCrearDescuentos = new JButton("Crear Sesión de Cine");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(btnCrearSesion, gbc);
 
         JButton btnCerrarSesion = new JButton("Cerrar Sesión");
         gbc.gridy++;
@@ -83,7 +90,7 @@ public class PerfilEntidad extends JFrame {
         // Cargar datos desde la BD
         cargarDatosEntidad();
         
-     // Acción para crear pelicula (más adelante abrirá una nueva ventana)
+     // Acción para crear pelicula 
         btnCrearPelicula.addActionListener(new ActionListener() {
 			
 			@Override
@@ -96,10 +103,20 @@ public class PerfilEntidad extends JFrame {
 			}
 		});
 
-        // Acción para crear sesión (más adelante abrirá una nueva ventana)
-        btnCrearSesion.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Abrir ventana para crear sesión de cine...");
-        });
+        // Acción para crear sesión 
+        btnCrearSesion.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				CrearSesion cs = new CrearSesion();
+				cs.setVisible(true);
+				
+			}
+		});
+        
+        
+        
 
         // Cerrar sesión
         btnCerrarSesion.addActionListener(e -> {
