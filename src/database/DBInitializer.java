@@ -46,19 +46,6 @@ public class DBInitializer {
                 ");"
             );
             
-            // Tabla sesión
-            stmt.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS sesion (" +
-                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " id_pelicula INTEGER NOT NULL," +
-                " fecha TEXT NOT NULL," +
-                " hora TEXT NOT NULL," +
-                " sala TEXT NOT NULL," +
-                " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
-                ");"
-            );
-
-            
             // Tabla descuento
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS descuento (" +
