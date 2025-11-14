@@ -19,12 +19,16 @@ public class Login extends JFrame {
     private JComboBox<String> cmbTipoUsuario;
 
     public Login() {
+    	
+    	//Configuracion de la ventana
         setTitle("Deusto Cine - Iniciar Sesión");
         setSize(400, 320);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
         
+        
+        //Utilizamos Gridbagcontraints para organizar la ventana
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         
@@ -68,7 +72,7 @@ public class Login extends JFrame {
         gbc.gridy = 3;
         add(btnRegistrar, gbc);
         
-        // Acción del botón de iniciar sesión
+        // Acción del boton de iniciar sesión
         btnLogin.addActionListener(e -> {
             String tipo = (String) cmbTipoUsuario.getSelectedItem();
             String email = txtEmail.getText().trim();
@@ -97,7 +101,7 @@ public class Login extends JFrame {
             }
         });
 
-        // Botón de registro
+        // Accion del boton de registro
         btnRegistrar.addActionListener(e -> {
             String tipo = (String) cmbTipoUsuario.getSelectedItem();
             dispose();
@@ -109,6 +113,7 @@ public class Login extends JFrame {
         });
     }
     
+    // Metodo que valida el inicio de sesion desde la base de datos
     private Usuario loginBD(String email, String password) {
         UsuarioDAO dao = new UsuarioDAO();
         Usuario u = dao.buscarPorEmail(email);
@@ -120,6 +125,7 @@ public class Login extends JFrame {
     }
 
 
+    //Metodo que valida el inicio de sesion desde los csv
     private boolean login(String filePath, String email, String password) {
         File file = new File(filePath);
         if (!file.exists()) return false;
@@ -146,7 +152,7 @@ public class Login extends JFrame {
         String dbPath = "resources/data/deustocine.sqlite";
         File dbFile = new File(dbPath);
 
-        // Si NO existe la BD -> inicializamos
+        // Si no existe la BD, la inicializamos
         if (!dbFile.exists()) {
             System.out.println("Base de datos no encontrada. Creando...");
             DBInitializer.initialize();
@@ -154,7 +160,7 @@ public class Login extends JFrame {
             System.out.println("Base de datos encontrada");
         }
 
-        // Mostrar login
+        
         new Login().setVisible(true);
     }
 

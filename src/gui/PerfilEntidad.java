@@ -90,20 +90,20 @@ public class PerfilEntidad extends JFrame {
         // Cargar datos desde la BD
         cargarDatosEntidad();
         
-     // Acción para crear pelicula 
+     // Accion para crear pelicula 
         btnCrearPelicula.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				CrearPelicula c = new CrearPelicula();
+				CrearPelicula c = new CrearPelicula(entidad);
 				c.setVisible(true);
 				
 			}
 		});
 
-        // Acción para crear sesión 
+        // Accion para crear sesión 
         btnCrearSesion.addActionListener(new ActionListener() {
 			
 			@Override
@@ -125,6 +125,7 @@ public class PerfilEntidad extends JFrame {
         });
     }
     
+    //Metodo que carga los datos de la entidad desde la base de datos
     private void cargarDatosEntidad() {
     	lblNombre.setText("Nombre: " + entidad.getNombre());
       lblEmail.setText("Email: " + entidad.getEmail());

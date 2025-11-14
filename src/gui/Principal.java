@@ -14,6 +14,8 @@ public class Principal extends JFrame{
 
 	public Principal(Usuario u) {
 		// TODO Auto-generated constructor stub
+		
+		//Configuracion inicial de la ventana
 		this.u = u;
 
 		this.setLocationRelativeTo(null);

@@ -18,6 +18,8 @@ public class CrearSesion extends JFrame {
     private JTextField txtFecha, txtHora, txtSala;
 
     public CrearSesion() {
+    	
+    	//Configuracion de la ventana
         setTitle("Crear Sesión");
         setSize(400, 300);
         setLocationRelativeTo(null);
@@ -25,11 +27,12 @@ public class CrearSesion extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
+     // Utilizamos GridBagContraints para organizar la ventana
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Selección de película
+        // JLabels
         JLabel lblPelicula = new JLabel("Película:");
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -40,7 +43,7 @@ public class CrearSesion extends JFrame {
         add(cmbPeliculas, gbc);
         cargarPeliculas();
 
-        // Fecha
+        
         JLabel lblFecha = new JLabel("Fecha (YYYY-MM-DD):");
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -50,7 +53,7 @@ public class CrearSesion extends JFrame {
         gbc.gridx = 1;
         add(txtFecha, gbc);
 
-        // Hora
+        
         JLabel lblHora = new JLabel("Hora (HH:MM):");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -60,7 +63,7 @@ public class CrearSesion extends JFrame {
         gbc.gridx = 1;
         add(txtHora, gbc);
 
-        // Sala
+        
         JLabel lblSala = new JLabel("Sala:");
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -70,7 +73,7 @@ public class CrearSesion extends JFrame {
         gbc.gridx = 1;
         add(txtSala, gbc);
 
-        // Botón Crear
+        // Botón Crear sesion
         JButton btnCrear = new JButton("Crear Sesión");
         gbc.gridx = 1;
         gbc.gridy = 4;
@@ -79,6 +82,7 @@ public class CrearSesion extends JFrame {
         btnCrear.addActionListener(e -> crearSesion());
     }
 
+    //Metodo que carga las peliculas
     private void cargarPeliculas() {
         PeliculaDAO dao = new PeliculaDAO();
         List<Pelicula> peliculas = dao.listar();
@@ -87,6 +91,7 @@ public class CrearSesion extends JFrame {
         }
     }
 
+    //Metodo que crea la sesion de cine
     private void crearSesion() {
         Pelicula pelicula = (Pelicula) cmbPeliculas.getSelectedItem();
         String fecha = txtFecha.getText().trim();
@@ -121,6 +126,7 @@ public class CrearSesion extends JFrame {
         }
     }
 
+    //Metodo que limpia los campos una vez creada la sesion de cine
     private void limpiarCampos() {
         txtFecha.setText("");
         txtHora.setText("");

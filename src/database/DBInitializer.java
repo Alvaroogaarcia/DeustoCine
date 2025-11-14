@@ -34,7 +34,7 @@ public class DBInitializer {
                 "('Servicios Culturales Donosti SL', 'info@servcultural.com', '943987654', 'San Sebastián', '1234', 'B87654321', NULL);"
             );
 
-            // Tabla pelicula
+            // Tabla pelicula 
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS pelicula (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -42,7 +42,9 @@ public class DBInitializer {
                 " anio INTEGER," +
                 " duracion INTEGER," +
                 " genero TEXT," +
-                " sinopsis TEXT" +
+                " sinopsis TEXT," +
+                " aforo INTEGER," +
+                " imagen TEXT" +
                 ");"
             );
             

@@ -38,7 +38,7 @@ public class UsuarioDAO {
         }
 
         if (existeEmail(usuario.getEmail())) {
-            System.err.println("⚠️ El email ya existe: " + usuario.getEmail());
+            System.err.println("El email ya existe: " + usuario.getEmail());
             return false; // no insertado
         }
         

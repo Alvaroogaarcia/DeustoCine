@@ -25,11 +25,11 @@ public class PeliculaDAO {
             pstmt.setString(6, pelicula.getImagen());
             pstmt.executeUpdate();
 
-            System.out.println("✅ Película insertada correctamente: " + pelicula.getTitulo());
+            System.out.println("Película insertada correctamente: " + pelicula.getTitulo());
 
         } catch (SQLException e) {
 
-            System.err.println("❌ Error insertando película:");
+            System.err.println("Error insertando película:");
             e.printStackTrace();
         }
     }
@@ -58,7 +58,7 @@ public class PeliculaDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("❌ Error listando películas:");
+            System.err.println("Error listando películas:");
             e.printStackTrace();
         }
 
@@ -90,7 +90,7 @@ public class PeliculaDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("❌ Error buscando película con ID=" + id);
+            System.err.println("Error buscando película con ID=" + id);
             e.printStackTrace();
         }
 
@@ -114,10 +114,10 @@ public class PeliculaDAO {
             ps.setInt(7, pelicula.getId());
 
             ps.executeUpdate();
-            System.out.println("✅ Película actualizada correctamente: " + pelicula.getTitulo());
+            System.out.println("Película actualizada correctamente: " + pelicula.getTitulo());
 
         } catch (SQLException e) {
-            System.err.println("❌ Error actualizando película:");
+            System.err.println("Error actualizando película:");
             e.printStackTrace();
         }
     }
@@ -133,10 +133,10 @@ public class PeliculaDAO {
             ps.setInt(1, id);
             ps.executeUpdate();
 
-            System.out.println("🗑️ Película eliminada con ID=" + id);
+            System.out.println("Película eliminada con ID=" + id);
 
         } catch (SQLException e) {
-            System.err.println("❌ Error eliminando película con ID=" + id);
+            System.err.println("Error eliminando película con ID=" + id);
             e.printStackTrace();
         }
     }
