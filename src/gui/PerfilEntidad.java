@@ -62,37 +62,28 @@ public class PerfilEntidad extends JFrame {
         add(lblNif, gbc);
         gbc.gridy++;
         
-        JButton btnCrearPelicula = new JButton("Crear Pelicula");
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnCrearPelicula, gbc);
-
+        JButton btnCrearPelicula = new JButton("Crear Película");
         JButton btnCrearSesion = new JButton("Crear Sesión de Cine");
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnCrearSesion, gbc);
-        
-        JButton btnCrearDescuentos = new JButton("Crear Sesión de Cine");
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnCrearSesion, gbc);
-        
+        JButton btnCrearDescuentos = new JButton("Crear Descuento");
         JButton btnVerPeliculas = new JButton("Ver Películas");
+        JButton btnCerrarSesion = new JButton("Cerrar Sesión");
+
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        panelBotones.add(btnCrearPelicula);
+        panelBotones.add(btnCrearSesion);
+        panelBotones.add(btnCrearDescuentos);
+        panelBotones.add(btnVerPeliculas);
+        panelBotones.add(btnCerrarSesion);
+
+        panelBotones.setBorder(BorderFactory.createTitledBorder("Acciones"));
+
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        add(btnVerPeliculas, gbc);
+        add(panelBotones, gbc);
 
-        JButton btnCerrarSesion = new JButton("Cerrar Sesión");
-        gbc.gridy++;
-        add(btnCerrarSesion, gbc);
 
         // Cargar datos desde la BD
         cargarDatosEntidad();
