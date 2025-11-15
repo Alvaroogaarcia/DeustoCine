@@ -82,6 +82,13 @@ public class PerfilEntidad extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(btnCrearSesion, gbc);
+        
+        JButton btnVerPeliculas = new JButton("Ver Películas");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(btnVerPeliculas, gbc);
 
         JButton btnCerrarSesion = new JButton("Cerrar Sesión");
         gbc.gridy++;
@@ -114,6 +121,14 @@ public class PerfilEntidad extends JFrame {
 				
 			}
 		});
+        
+        //Accion para ver las peliculas
+        btnVerPeliculas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TablaPeliculasEntidad().setVisible(true);
+            }
+        });
         
         
         
