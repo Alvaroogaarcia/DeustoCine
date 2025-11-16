@@ -8,6 +8,9 @@ import java.io.IOException;
 
 import javax.swing.*;
 
+import dao.UsuarioDAO;
+import domain.Entidad;
+
 public class RegistroEntidad extends JFrame {
 
     public RegistroEntidad() {
@@ -123,14 +126,25 @@ public class RegistroEntidad extends JFrame {
     }
 
     // Método para guardar en CSV
+//    private void registrarEntidad(String nombre, String password, String email, String telefono, String direccion, String nif) {
+//        try (BufferedWriter bw = new BufferedWriter(new FileWriter("resources/data/entidades.csv", true))) {
+//            bw.write(nombre + ";" + password + ";" + email + ";" + telefono + ";" + direccion + ";" + nif);
+//            bw.newLine();
+//            bw.flush();
+//            System.out.println("Entidad guardada en CSV");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
     private void registrarEntidad(String nombre, String password, String email, String telefono, String direccion, String nif) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("resources/data/entidades.csv", true))) {
-            bw.write(nombre + ";" + password + ";" + email + ";" + telefono + ";" + direccion + ";" + nif);
-            bw.newLine();
-            bw.flush();
-            System.out.println("Entidad guardada en CSV");
-        } catch (IOException e) {
-            e.printStackTrace();
+        Entidad entidad = new Entidad(nombre, email, telefono, direccion, password, nif);
+        UsuarioDAO uDao = new UsuarioDAO();
+        boolean resultado = uDao.insertar(entidad);
+        
+        if (resultado) {
+            System.out.println("Entidad guardada en BD correctamente");
+        } else {
+            JOptionPane.showMessageDialog(this, "Error: El email ya existe o hubo un problema.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
