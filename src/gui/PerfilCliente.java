@@ -1,6 +1,11 @@
 package gui;
 
 import javax.swing.*;
+
+import dao.UsuarioDAO;
+import domain.Cliente;
+import domain.Usuario;
+
 import java.awt.*;
 import java.io.*;
 
@@ -74,32 +79,57 @@ public class PerfilCliente extends JFrame {
         cargarDatosCliente(email);
     }
 
-    /**
-     * Carga los datos del cliente desde el archivo CSV en base a su correo.
-     */
+//    private void cargarDatosCliente(String email) {
+//        File file = new File("resources/data/usuarios.csv");
+//        if (!file.exists()) {
+//            JOptionPane.showMessageDialog(this, "No se encontró el archivo de usuarios.", "Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//
+//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//            String linea;
+//            while ((linea = br.readLine()) != null) {
+//                String[] datos = linea.split(";");
+//                if (datos.length >= 6 && datos[2].equals(email)) {
+//                    lblNombre.setText("Nombre: " + datos[0]);
+//                    lblEmail.setText("Email: " + datos[2]);
+//                    lblTelefono.setText("Teléfono: " + datos[3]);
+//                    lblDireccion.setText("Dirección: " + datos[4]);
+//                    lblCP.setText("Código Postal: " + datos[5]);
+//                    return;
+//                }
+//            }
+//            JOptionPane.showMessageDialog(this, "No se encontraron datos para este cliente.", "Aviso", JOptionPane.WARNING_MESSAGE);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
+    
+//  Carga los datos del cliente desde la base de datos en base a su correo.
+     
     private void cargarDatosCliente(String email) {
-        File file = new File("resources/data/usuarios.csv");
-        if (!file.exists()) {
-            JOptionPane.showMessageDialog(this, "No se encontró el archivo de usuarios.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(";");
-                if (datos.length >= 6 && datos[2].equals(email)) {
-                    lblNombre.setText("Nombre: " + datos[0]);
-                    lblEmail.setText("Email: " + datos[2]);
-                    lblTelefono.setText("Teléfono: " + datos[3]);
-                    lblDireccion.setText("Dirección: " + datos[4]);
-                    lblCP.setText("Código Postal: " + datos[5]);
-                    return;
-                }
+        UsuarioDAO dao = new UsuarioDAO();
+        Usuario u = dao.buscarPorEmail(email);
+        
+        if (u != null && u instanceof Cliente) {
+            Cliente cliente = (Cliente) u;
+            lblNombre.setText("Nombre: " + cliente.getNombre());
+            lblEmail.setText("Email: " + cliente.getEmail());
+            lblTelefono.setText("Teléfono: " + cliente.getNumTelefono());
+            
+            // La dirección se guardó como "direccion;codigoPostal"
+            String direccionCompleta = cliente.getDireccion();
+            if (direccionCompleta != null && direccionCompleta.contains(";")) {
+                String[] partes = direccionCompleta.split(";", 2);
+                lblDireccion.setText("Dirección: " + partes[0]);
+                lblCP.setText("Código Postal: " + (partes.length > 1 ? partes[1] : "N/A"));
+            } else {
+                lblDireccion.setText("Dirección: " + (direccionCompleta != null ? direccionCompleta : "N/A"));
+                lblCP.setText("Código Postal: N/A");
             }
+        } else {
             JOptionPane.showMessageDialog(this, "No se encontraron datos para este cliente.", "Aviso", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
