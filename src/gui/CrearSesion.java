@@ -21,63 +21,85 @@ public class CrearSesion extends JFrame {
     	
     	//Configuracion de la ventana
         setTitle("Crear Sesión");
-        setSize(400, 300);
+        setSize(430, 320);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(new GridBagLayout());
+        
+        //Anyadimos una fuente mas bonita
+        Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
+        UIManager.put("Label.font", fuente);
+        UIManager.put("Button.font", fuente);
+        UIManager.put("ComboBox.font", fuente);
+        UIManager.put("TextField.font", fuente);
+        
+        //Anyadimos un panel principal con bordes y demas
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        add(panel);
 
-     // Utilizamos GridBagContraints para organizar la ventana
+        // Utilizamos GridBagContraints para organizar la ventana
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // JLabels
+        // JLabel de Pelicula
         JLabel lblPelicula = new JLabel("Película:");
+        lblPelicula.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(lblPelicula, gbc);
+        panel.add(lblPelicula, gbc);
 
         cmbPeliculas = new JComboBox<>();
         gbc.gridx = 1;
-        add(cmbPeliculas, gbc);
+        panel.add(cmbPeliculas, gbc);
         cargarPeliculas();
 
-        
+        //Label fechas
         JLabel lblFecha = new JLabel("Fecha (YYYY-MM-DD):");
+        lblFecha.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(lblFecha, gbc);
+        panel.add(lblFecha, gbc);
 
         txtFecha = new JTextField(20);
         gbc.gridx = 1;
-        add(txtFecha, gbc);
+        panel.add(txtFecha, gbc);
 
-        
+        //Label de hora
         JLabel lblHora = new JLabel("Hora (HH:MM):");
+        lblHora.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 2;
-        add(lblHora, gbc);
+        panel.add(lblHora, gbc);
 
         txtHora = new JTextField(20);
         gbc.gridx = 1;
-        add(txtHora, gbc);
+        panel.add(txtHora, gbc);
 
-        
+        //Label de sala
         JLabel lblSala = new JLabel("Sala:");
+        lblSala.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 3;
-        add(lblSala, gbc);
+        panel.add(lblSala, gbc);
 
         txtSala = new JTextField(20);
         gbc.gridx = 1;
-        add(txtSala, gbc);
+        panel.add(txtSala, gbc);
 
         // Botón Crear sesion
         JButton btnCrear = new JButton("Crear Sesión");
+        btnCrear.setBackground(new Color(30, 144, 255));
+        btnCrear.setForeground(Color.WHITE);
+        btnCrear.setFocusPainted(false);
+        btnCrear.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btnCrear.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         gbc.gridx = 1;
         gbc.gridy = 4;
-        add(btnCrear, gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(btnCrear, gbc);
 
         btnCrear.addActionListener(e -> crearSesion());
     }
