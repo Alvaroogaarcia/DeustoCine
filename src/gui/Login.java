@@ -52,6 +52,21 @@ public class Login extends JFrame {
         gbc.gridy = 1;
         add(txtEmail, gbc);
         
+        txtEmail.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String email = txtEmail.getText().trim();
+                
+                if (email.isEmpty()) {
+                    txtEmail.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+                } else if (email.contains("@") && email.indexOf("@") < email.lastIndexOf(".")) {
+                    txtEmail.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+                } else {
+                    txtEmail.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                }
+            }
+        });
+        
         JLabel lblPassword = new JLabel("Contraseña:");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -66,6 +81,15 @@ public class Login extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(btnLogin, gbc);
+        
+        txtPassword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    btnLogin.doClick(); 
+                }
+            }
+        });
 
         JButton btnRegistrar = new JButton("Registrarse");
         gbc.gridx = 0;
