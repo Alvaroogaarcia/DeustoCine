@@ -87,6 +87,17 @@ public class CrearSesion extends JFrame {
         txtSala = new JTextField(20);
         gbc.gridx = 1;
         panel.add(txtSala, gbc);
+        
+        //Boton Volver
+        JButton btnVolver = new JButton("Volver");
+        btnVolver.setFocusPainted(false);
+        btnVolver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        gbc.gridx=0;
+        gbc.gridy= 4;
+        gbc.anchor= GridBagConstraints.CENTER;
+        panel.add(btnVolver, gbc);
+        
 
         // Botón Crear sesion
         JButton btnCrear = new JButton("Crear Sesión");
@@ -102,6 +113,7 @@ public class CrearSesion extends JFrame {
         panel.add(btnCrear, gbc);
 
         btnCrear.addActionListener(e -> crearSesion());
+        btnVolver.addActionListener(e -> dispose());
     }
 
     //Metodo que carga las peliculas
