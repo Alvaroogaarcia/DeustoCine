@@ -1,9 +1,7 @@
 package gui;
 
 import javax.swing.*;
-
 import domain.Entidad;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,26 +22,32 @@ public class PerfilEntidad extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
-        setLayout(new GridBagLayout());
+
+        // Usamos BorderLayout
+        setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(245, 245, 245));
+
+        // PANEL DE DATOS
+        // =========================
+        JPanel panelDatos = new JPanel(new GridBagLayout());
+        panelDatos.setBackground(new Color(245, 245, 245));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
+        int fila = 0;
+
         // Título
         JLabel titulo = new JLabel("Perfil de Entidad");
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         titulo.setForeground(new Color(50, 50, 50));
+
         gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(titulo, gbc);
+        gbc.gridy = fila++;
+        panelDatos.add(titulo, gbc);
 
-        gbc.gridwidth = 1;
-        gbc.gridy++;
-
-        // Labels de datos
+        // Labels
         lblNombre = new JLabel("Nombre: ");
         lblEmail = new JLabel("Email: ");
         lblTelefono = new JLabel("Teléfono: ");
@@ -57,19 +61,17 @@ public class PerfilEntidad extends JFrame {
         lblDireccion.setForeground(colorTexto);
         lblNif.setForeground(colorTexto);
 
-        // Añadimos los labels al panel
-        add(lblNombre, gbc);
-        gbc.gridy++;
-        add(lblEmail, gbc);
-        gbc.gridy++;
-        add(lblTelefono, gbc);
-        gbc.gridy++;
-        add(lblDireccion, gbc);
-        gbc.gridy++;
-        add(lblNif, gbc);
-        gbc.gridy++;
+        gbc.gridy = fila++; panelDatos.add(lblNombre, gbc);
+        gbc.gridy = fila++; panelDatos.add(lblEmail, gbc);
+        gbc.gridy = fila++; panelDatos.add(lblTelefono, gbc);
+        gbc.gridy = fila++; panelDatos.add(lblDireccion, gbc);
+        gbc.gridy = fila++; panelDatos.add(lblNif, gbc);
 
-        // Botones
+        // Añadir panelDatos arriba
+        add(panelDatos, BorderLayout.NORTH);
+
+        // PANEL DE BOTONES
+        // =========================
         JButton btnCrearPelicula = new JButton("Crear Película");
         JButton btnCrearSesion = new JButton("Crear Sesión de Cine");
         JButton btnCrearDescuentos = new JButton("Crear Descuento");
@@ -103,39 +105,29 @@ public class PerfilEntidad extends JFrame {
 
         panelBotones.setBorder(BorderFactory.createTitledBorder("Acciones"));
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(panelBotones, gbc);
+        // AÑADIR EL PANEL DE BOTONES AL CENTRO (CORRECTO)
+        add(panelBotones, BorderLayout.CENTER);
 
-        // Cargar datos desde la BD
+        // =========================
+        // Cargar datos
+        // =========================
         cargarDatosEntidad();
 
-        // Accion para crear pelicula 
-        btnCrearPelicula.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CrearPelicula c = new CrearPelicula(entidad);
-                c.setVisible(true);
-            }
+        // Accion para crear película 
+        btnCrearPelicula.addActionListener(e -> {
+            CrearPelicula c = new CrearPelicula(entidad);
+            c.setVisible(true);
         });
 
         // Accion para crear sesión 
-        btnCrearSesion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CrearSesion cs = new CrearSesion();
-                cs.setVisible(true);
-            }
+        btnCrearSesion.addActionListener(e -> {
+            CrearSesion cs = new CrearSesion();
+            cs.setVisible(true);
         });
 
         // Accion para ver las peliculas
-        btnVerPeliculas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new TablaPeliculasEntidad().setVisible(true);
-            }
+        btnVerPeliculas.addActionListener(e -> {
+            new TablaPeliculasEntidad().setVisible(true);
         });
 
         // Cerrar sesión
@@ -145,7 +137,7 @@ public class PerfilEntidad extends JFrame {
         });
     }
     
-    //Metodo que carga los datos de la entidad desde la base de datos
+    // Metodo carga datos
     private void cargarDatosEntidad() {
         lblNombre.setText("Nombre: " + entidad.getNombre());
         lblEmail.setText("Email: " + entidad.getEmail());
@@ -155,32 +147,6 @@ public class PerfilEntidad extends JFrame {
     }
 }
 
-
-//    private void cargarDatosEntidad(String email) {
-//        File file = new File("resources/data/entidades.csv");
-//        if (!file.exists()) {
-//            JOptionPane.showMessageDialog(this, "No se encontró el archivo de entidades.", "Error", JOptionPane.ERROR_MESSAGE);
-//            return;
-//        }
-//
-//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-//            String linea;
-//            while ((linea = br.readLine()) != null) {
-//                String[] datos = linea.split(";");
-//                if (datos.length >= 6 && datos[2].equals(email)) {
-//                    lblNombre.setText("Nombre: " + datos[0]);
-//                    lblEmail.setText("Email: " + datos[2]);
-//                    lblTelefono.setText("Teléfono: " + datos[3]);
-//                    lblDireccion.setText("Dirección: " + datos[4]);
-//                    lblNif.setText("NIF: " + datos[5]);
-//                    return;
-//                }
-//            }
-//            JOptionPane.showMessageDialog(this, "No se encontraron datos para esta entidad.", "Aviso", JOptionPane.WARNING_MESSAGE);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
    
 
