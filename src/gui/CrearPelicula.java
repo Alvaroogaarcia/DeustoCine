@@ -70,7 +70,13 @@ public class CrearPelicula extends JFrame {
 
         //Actiion listener sobre el boton para elegir la imagen
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
-
+        
+        //Boton volver
+        JButton btnVolver = new JButton("Volver");
+        gbc.gridx = 0; gbc.gridy = 7; add(btnVolver, gbc);
+        btnVolver.addActionListener(e-> dispose());
+        
+        
         // Boton crear pelicula
         JButton btnCrear = new JButton("Crear Película");
         gbc.gridx = 1; gbc.gridy = 7; add(btnCrear, gbc);
