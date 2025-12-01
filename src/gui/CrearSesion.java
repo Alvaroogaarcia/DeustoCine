@@ -25,6 +25,7 @@ public class CrearSesion extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
         
         //Anyadimos una fuente mas bonita
         Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
@@ -33,10 +34,19 @@ public class CrearSesion extends JFrame {
         UIManager.put("ComboBox.font", fuente);
         UIManager.put("TextField.font", fuente);
         
+        //Titulo arriba
+        JLabel lblTitulo = new JLabel("Crear Sesion de Cine", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(new Color(30, 144, 255));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        add(lblTitulo, BorderLayout.NORTH);
+        
         //Anyadimos un panel principal con bordes y demas
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        add(panel);
+        panel.setBackground(new Color(250, 250, 250));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(210, 210, 210)),
+        		BorderFactory.createEmptyBorder(15, 20, 15, 20)));
+        add(panel, BorderLayout.CENTER);
 
         // Utilizamos GridBagContraints para organizar la ventana
         GridBagConstraints gbc = new GridBagConstraints();
@@ -51,6 +61,7 @@ public class CrearSesion extends JFrame {
         panel.add(lblPelicula, gbc);
 
         cmbPeliculas = new JComboBox<>();
+        cmbPeliculas.setToolTipText("Selecciona la pelicula para la sesion");
         gbc.gridx = 1;
         panel.add(cmbPeliculas, gbc);
         cargarPeliculas();
@@ -60,9 +71,10 @@ public class CrearSesion extends JFrame {
         lblFecha.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.weightx= 1.0;
         panel.add(lblFecha, gbc);
 
-        txtFecha = new JTextField(20);
+        txtFecha = new JTextField(30);
         gbc.gridx = 1;
         panel.add(txtFecha, gbc);
 
@@ -71,9 +83,10 @@ public class CrearSesion extends JFrame {
         lblHora.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.weightx= 1.0;
         panel.add(lblHora, gbc);
 
-        txtHora = new JTextField(20);
+        txtHora = new JTextField(30);
         gbc.gridx = 1;
         panel.add(txtHora, gbc);
 
@@ -82,9 +95,10 @@ public class CrearSesion extends JFrame {
         lblSala.setFont(fuente.deriveFont(Font.BOLD));
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.weightx= 1.0;
         panel.add(lblSala, gbc);
 
-        txtSala = new JTextField(20);
+        txtSala = new JTextField(30);
         gbc.gridx = 1;
         panel.add(txtSala, gbc);
         
@@ -92,11 +106,6 @@ public class CrearSesion extends JFrame {
         JButton btnVolver = new JButton("Volver");
         btnVolver.setFocusPainted(false);
         btnVolver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-        gbc.gridx=0;
-        gbc.gridy= 4;
-        gbc.anchor= GridBagConstraints.CENTER;
-        panel.add(btnVolver, gbc);
         
 
         // Botón Crear sesion
@@ -107,11 +116,20 @@ public class CrearSesion extends JFrame {
         btnCrear.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnCrear.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(btnCrear, gbc);
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        panelBotones.setOpaque(false);
+        panelBotones.add(btnVolver);
+        panelBotones.add(btnCrear);
 
+        // Los colocamos en una sola “fila en la parte de abajo del formulario
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;                     // NUEVO: ocupan dos columnas
+        gbc.anchor = GridBagConstraints.EAST;  // NUEVO: alineados a la derecha
+        panel.add(panelBotones, gbc);
+
+        // 🔵 NUEVO: que pulsar ENTER dispare el botón de crear sesión
+        getRootPane().setDefaultButton(btnCrear);
         btnCrear.addActionListener(e -> crearSesion());
         btnVolver.addActionListener(e -> dispose());
     }
