@@ -124,6 +124,11 @@ public class PerfilEntidad extends JFrame {
             CrearSesion cs = new CrearSesion();
             cs.setVisible(true);
         });
+        
+        btnCrearDescuentos.addActionListener(e -> {
+            Descuento d = new Descuento();
+            d.setVisible(true);
+        });
 
         // Accion para ver las peliculas
         btnVerPeliculas.addActionListener(e -> {
