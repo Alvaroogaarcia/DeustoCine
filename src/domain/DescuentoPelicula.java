@@ -10,6 +10,10 @@ public class DescuentoPelicula {
         this.codigo = codigo;
         this.porcentaje = porcentaje;
     }
+    
+    public DescuentoPelicula(String id, double porcentaje) {
+        this(id, null, porcentaje);
+    }
 
     public String getId() {
         return id;
