@@ -4,9 +4,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,129 +21,113 @@ import domain.DescuentoPelicula;
 
 public class Descuento extends JFrame{
 
-	private JTextField txtId;
+	private JComboBox<String> cmbGenero;
     private JTextField txtPorcentaje;
 
     public Descuento() {
 
-        // Window configuration
-        setTitle("Deusto Cine - Create Discount");
-        setSize(350, 200);
+    	// Configuración de la ventana
+    	setTitle("Crear Descuento");
+        setSize(350, 220);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-        // UI font styling
-        Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
-        UIManager.put("Label.font", fuente);
-        UIManager.put("Button.font", fuente);
-        UIManager.put("TextField.font", fuente);
-
-        // Main container panel
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        setContentPane(panel);
+        setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        int row = 0;
+        // ---- Género ----
+        gbc.gridx = 0; gbc.gridy = 0;
+        add(new JLabel("Género:"), gbc);
 
-        // --- Discount ID ---
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        panel.add(new JLabel("Discount ID:"), gbc);
-
-        gbc.gridx = 1;
-        txtId = new JTextField(15);
-        panel.add(txtId, gbc);
-
-        // Discount percentage
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        panel.add(new JLabel("Percentage (%):"), gbc);
+        cmbGenero = new JComboBox<>(new String[]{
+                "Accion", "Comedia", "Drama", "Terror",
+                "Ciencia Ficcion", "Romance", "Animacion",
+                "Thriller", "Otros"
+        });
 
         gbc.gridx = 1;
-        txtPorcentaje = new JTextField(15);
-        panel.add(txtPorcentaje, gbc);
+        add(cmbGenero, gbc);
 
-        // Buttons
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.EAST;
+        // ---- Porcentaje ----
+        gbc.gridx = 0; gbc.gridy = 1;
+        add(new JLabel("Porcentaje (%):"), gbc);
 
-        JButton btnCancel = new JButton("Cancel");
-        JButton btnCreate = new JButton("Create");
+        txtPorcentaje = new JTextField();
+        gbc.gridx = 1;
+        add(txtPorcentaje, gbc);
 
-        JPanel buttonPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 5));
-        buttonPanel.add(btnCancel);
-        buttonPanel.add(btnCreate);
+        // ---- Botón ----
+        JButton btnCrear = new JButton("Crear Descuento");
+        gbc.gridx = 1; gbc.gridy = 2;
+        add(btnCrear, gbc);
 
-        panel.add(buttonPanel, gbc);
-
-        // Button actions
-        btnCancel.addActionListener(e -> dispose());
-        btnCreate.addActionListener(e -> createDiscount());
-
-        // Pressing ENTER triggers "Create"
-        getRootPane().setDefaultButton(btnCreate);
+        btnCrear.addActionListener(e -> crearDescuento());
+        
     }
 
-    private void createDiscount() {
-        String id = txtId.getText().trim();
-        String porcentajeText = txtPorcentaje.getText().trim();
+    private void crearDescuento() {
 
-        // Basic validation
-        if (id.isEmpty() || porcentajeText.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Please fill in all fields.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        String genero = (String) cmbGenero.getSelectedItem();
+        String porcentajeStr = txtPorcentaje.getText().trim();
+
+        if (porcentajeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese un porcentaje");
             return;
         }
 
         double porcentaje;
         try {
-            porcentaje = Double.parseDouble(porcentajeText);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Percentage must be a numeric value.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            porcentaje = Double.parseDouble(porcentajeStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Porcentaje inválido");
             return;
         }
 
         if (porcentaje <= 0 || porcentaje > 100) {
-            JOptionPane.showMessageDialog(this,
-                    "Percentage must be between 1 and 100.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El porcentaje debe ser entre 1 y 100");
             return;
         }
 
-        // Create domain object (no code field used here)
-        DescuentoPelicula desc = new DescuentoPelicula(id, porcentaje);
+        // Generar el código automáticamente
+        String codigo = generarCodigo(genero);
 
-        // Attempt to save using DAO
+        DescuentoPelicula descuento = new DescuentoPelicula(codigo, porcentaje);
+
         DescuentoDAO dao = new DescuentoDAO();
-        boolean inserted = dao.insertar(desc);
 
-        if (!inserted) {
+        if (dao.insertar(descuento)) {
             JOptionPane.showMessageDialog(this,
-                    "A discount with this ID already exists.",
-                    "Duplicate ID",
-                    JOptionPane.WARNING_MESSAGE);
+                    "Descuento creado!\nCódigo generado: " + codigo);
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this,
-                    "Discount created successfully!",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
-            dispose();
+                    "Error: ya existe un descuento con ese código",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    private String generarCodigo(String genero) {
+        char letra;
+
+        switch (genero.toLowerCase()) {
+            case "accion": letra = 'A'; break;
+            case "comedia": letra = 'C'; break;
+            case "drama": letra = 'D'; break;
+            case "terror": letra = 'T'; break;
+            case "ciencia ficcion": letra = 'S'; break;
+            case "romance": letra = 'R'; break;
+            case "animacion": letra = 'N'; break;
+            case "thriller": letra = 'H'; break;
+            default: letra = 'X';
+        }
+
+        Random random = new Random();
+        int numero = 1000 + random.nextInt(9000);
+
+        return letra + String.valueOf(numero);
     }
 
     public static void main(String[] args) {

@@ -27,16 +27,14 @@ public class DescuentoDAO {
 	}
 	public boolean insertar(DescuentoPelicula d) {
 	
-		if(existePorId(d.getId())) {
-			return false;
-		}
 		
-		String sql = "INSERT INTO descuento (id, codigo, porcentaje) VALUES (?, ?, ?)";
+		
+		String sql = "INSERT INTO descuento (codigo, porcentaje) VALUES (?, ?)";
 		try (Connection conn= DBConnection.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)){
-			ps.setString(1, d.getId());
-			ps.setString(2, d.getCodigo());
-			ps.setDouble(3, d.getPorcentaje());
+			
+			ps.setString(1, d.getCodigo());
+			ps.setDouble(2, d.getPorcentaje());
 			
 			ps.executeUpdate();
 			return true;
