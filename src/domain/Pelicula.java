@@ -20,6 +20,11 @@ public class Pelicula {
         this.aforo = aforo;
         this.imagen = imagen;
     }
+    public Pelicula(int id, String titulo) {
+        this.id = id;
+        this.titulo = titulo;
+    }
+
 
     public Pelicula(String titulo, int anio, int duracion, String genero, int aforo, String imagen) {
         this(0, titulo, anio, duracion, genero, aforo, imagen);
@@ -49,14 +54,6 @@ public class Pelicula {
 
     @Override
     public String toString() {
-        return "Pelicula{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", anio=" + anio +
-                ", duracion=" + duracion +
-                ", genero='" + genero + '\'' +
-                ", aforo=" + aforo +
-                ", imagen='" + imagen + '\'' +
-                '}';
+        return titulo;
     }
 }
