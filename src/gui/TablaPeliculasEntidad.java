@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.util.List;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.FlowLayout;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -15,9 +16,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import dao.PeliculaDAO;
 import domain.Pelicula;
+import domain.GestorRecursivoPelicula;
 
 public class TablaPeliculasEntidad extends JFrame {
 
@@ -31,13 +36,12 @@ public class TablaPeliculasEntidad extends JFrame {
         peliculaDAO = new PeliculaDAO();
 
         setTitle("Deusto Cine - Películas");
-        setSize(800, 400);
+        setSize(900, 450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         initComponents();
         cargarPeliculas();
-
     }
 
     private void initComponents() {
@@ -59,41 +63,132 @@ public class TablaPeliculasEntidad extends JFrame {
         };
 
         tablaPeliculas = new JTable(modeloTabla);
-        
+
         tablaPeliculas.setGridColor(Color.LIGHT_GRAY);
         tablaPeliculas.setFillsViewportHeight(true);
         tablaPeliculas.setSelectionBackground(new Color(220,235,252));
         tablaPeliculas.setSelectionForeground(Color.BLACK);
-        
+
         DefaultTableCellRenderer rendererImagen = new DefaultTableCellRenderer() {
-        	 @Override
-             public Component getTableCellRendererComponent(
-                     JTable table, Object value, boolean isSelected,boolean hasFocus, int row, int column) {
-        		 JLabel label = (JLabel) super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
-        		 label.setHorizontalAlignment(SwingConstants.CENTER);
-        		 
-        		 if (value != null) {
-        			 try {
-        				 ImageIcon original = new ImageIcon(value.toString());
-        				 Image imgEscalada = original.getImage().getScaledInstance(60, 80,  Image.SCALE_SMOOTH);
-        				 label.setIcon(new ImageIcon(imgEscalada));
-        				 
-        			 }catch (Exception e) {
-        				 label.setIcon(null);
-        			 }
-        		 }else {
-        			 label.setIcon(null);
-        		 }
-        		 return label;
-        	 }
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+
+                if (value != null) {
+                    try {
+                        ImageIcon original = new ImageIcon(value.toString());
+                        Image imgEscalada = original.getImage().getScaledInstance(60, 80, Image.SCALE_SMOOTH);
+                        label.setIcon(new ImageIcon(imgEscalada));
+
+                    } catch (Exception e) {
+                        label.setIcon(null);
+                    }
+                } else {
+                    label.setIcon(null);
+                }
+                return label;
+            }
         };
-        
+
         tablaPeliculas.getColumnModel().getColumn(6).setCellRenderer(rendererImagen);
 
         JScrollPane scrollPane = new JScrollPane(tablaPeliculas);
 
+        // PANEL DE BOTONES RECURSIVOS
+        JPanel panelBotones = new JPanel(new FlowLayout());
+
+        JButton btnContar = new JButton("Contar Películas");
+        JButton btnMostrarTitulos = new JButton("Mostrar Títulos");
+        JButton btnDuracionTotal = new JButton("Duración Total");
+        JButton btnFiltrarGenero = new JButton("Filtrar por Género");
+        JButton btnBuscarAnio = new JButton("Buscar por Año");
+
+        panelBotones.add(btnContar);
+        panelBotones.add(btnMostrarTitulos);
+        panelBotones.add(btnDuracionTotal);
+        panelBotones.add(btnFiltrarGenero);
+        panelBotones.add(btnBuscarAnio);
+
+        // CONTAR RECURSIVO
+        btnContar.addActionListener(e -> {
+            List<Pelicula> peliculas = peliculaDAO.listar();
+            int total = GestorRecursivoPelicula.contarRecursivo(peliculas, 0);
+            JOptionPane.showMessageDialog(this, "Total de películas: " + total);
+        });
+
+        // MOSTRAR TÍTULOS RECURSIVO
+        btnMostrarTitulos.addActionListener(e -> {
+            List<Pelicula> peliculas = peliculaDAO.listar();
+            String titulos = GestorRecursivoPelicula.titulosComoString(peliculas);
+            JOptionPane.showMessageDialog(this, titulos, "Títulos", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        // DURACIÓN TOTAL RECURSIVA
+        btnDuracionTotal.addActionListener(e -> {
+            List<Pelicula> peliculas = peliculaDAO.listar();
+            int totalMin = GestorRecursivoPelicula.duracionTotalRecursiva(peliculas, 0);
+            JOptionPane.showMessageDialog(this, "Duración total: " + totalMin + " minutos");
+        });
+
+        // FILTRAR POR GÉNERO RECURSIVO
+        btnFiltrarGenero.addActionListener(e -> {
+            String genero = JOptionPane.showInputDialog("Introduce un género:");
+
+            if (genero == null || genero.trim().isEmpty()) return;
+
+            List<Pelicula> origen = peliculaDAO.listar();
+            List<Pelicula> resultado = new java.util.ArrayList<>();
+
+            GestorRecursivoPelicula.filtrarPorGeneroRecursivo(origen, 0, genero, resultado);
+
+            modeloTabla.setRowCount(0);
+            for (Pelicula p : resultado) {
+                Object[] fila = {
+                        p.getId(),
+                        p.getTitulo(),
+                        p.getAnio(),
+                        p.getDuracion(),
+                        p.getGenero(),
+                        p.getAforo(),
+                        p.getImagen()
+                };
+                modeloTabla.addRow(fila);
+            }
+        });
+
+        // BUSCAR POR AÑO RECURSIVO
+        btnBuscarAnio.addActionListener(e -> {
+            String texto = JOptionPane.showInputDialog("Introduce un año:");
+
+            if (texto == null || texto.trim().isEmpty()) return;
+
+            int anio = Integer.parseInt(texto);
+
+            List<Pelicula> origen = peliculaDAO.listar();
+            List<Pelicula> resultado = new java.util.ArrayList<>();
+
+            GestorRecursivoPelicula.buscarPorAnioRecursivo(origen, 0, anio, resultado);
+
+            modeloTabla.setRowCount(0);
+            for (Pelicula p : resultado) {
+                Object[] fila = {
+                        p.getId(),
+                        p.getTitulo(),
+                        p.getAnio(),
+                        p.getDuracion(),
+                        p.getGenero(),
+                        p.getAforo(),
+                        p.getImagen()
+                };
+                modeloTabla.addRow(fila);
+            }
+        });
+
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(scrollPane, BorderLayout.CENTER);
+        getContentPane().add(panelBotones, BorderLayout.SOUTH); // ✅ AQUÍ SE AÑADEN LOS BOTONES
     }
 
     private void cargarPeliculas() {
@@ -128,3 +223,6 @@ public class TablaPeliculasEntidad extends JFrame {
     }
 
 }
+
+
+
