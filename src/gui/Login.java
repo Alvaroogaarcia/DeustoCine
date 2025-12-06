@@ -2,6 +2,8 @@ package gui;
 
 import javax.swing.*;
 
+import dao.ClienteDAO;
+import dao.EntidadDAO;
 import dao.UsuarioDAO;
 import database.DBInitializer;
 import domain.Cliente;
@@ -107,22 +109,22 @@ public class Login extends JFrame {
                 return;
             }
 
-           // String filePath = tipo.equals("Cliente") ? "resources/data/usuarios.csv" : "resources/data/entidades.csv";
-            Usuario u = loginBD( email, password);
+      
+            Usuario u = loginBD(email, password, tipo);
             if (u != null) {
                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso como " + tipo + ".");
                 dispose();
 
                 if (u instanceof Cliente){
-//                    new PerfilCliente(email).setVisible(true);
-                	new Principal(u).setVisible(true);
+                    new Principal(u).setVisible(true);
                 } else {
-                    new PerfilEntidad((Entidad)u).setVisible(true);
+                    new PerfilEntidad((Entidad) u).setVisible(true);
                 }
 
             } else {
                 JOptionPane.showMessageDialog(this, "Correo o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+
         });
 
         // Accion del boton de registro
@@ -138,39 +140,26 @@ public class Login extends JFrame {
     }
     
     // Metodo que valida el inicio de sesion desde la base de datos
-    private Usuario loginBD(String email, String password) {
-        UsuarioDAO dao = new UsuarioDAO();
-        Usuario u = dao.buscarPorEmail(email);
-
-        if (u == null) return null;
-
-     
-        return u.getContrasenya().equals(password)? u : null;
-    }
-
-
-    //Metodo que valida el inicio de sesion desde los csv
-    private boolean login(String filePath, String email, String password) {
-        File file = new File(filePath);
-        if (!file.exists()) return false;
-        
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length >= 3) {
-                    String storedEmail = parts[2];
-                    String storedPassword = parts[1];
-                    if (storedEmail.equals(email) && storedPassword.equals(password)) {
-                        return true;
-                    }
-                }
+    private Usuario loginBD(String email, String password, String tipo) {
+        if (tipo.equals("Cliente")) {
+            ClienteDAO cDao = new ClienteDAO();
+            Cliente c = cDao.buscarPorEmail(email); // Método que debes crear en ClienteDao
+            if (c != null && c.getContrasenya().equals(password)) {
+                return c;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else { // Entidad
+            EntidadDAO eDao = new EntidadDAO();
+            Entidad e = eDao.buscarPorEmail(email); // Método que debes crear en EntidadDao
+            if (e != null && e.getContrasenya().equals(password)) {
+                return e;
+            }
         }
-        return false;
+        return null;
     }
+
+
+
+
 
     public static void main(String[] args) {
         String dbPath = "resources/data/deustocine.sqlite";

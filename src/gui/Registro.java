@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import dao.ClienteDAO;
 import dao.UsuarioDAO;
 import domain.Cliente;
 
@@ -29,7 +30,7 @@ public class Registro extends JFrame {
         this.setSize(600, 600);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setTitle("Deusto Cine - Registro de Usuario");
+        this.setTitle("Deusto Cine - Registro de Cliente");
         this.setResizable(false);
 
         panel = new JPanel(new GridBagLayout());
@@ -38,7 +39,7 @@ public class Registro extends JFrame {
         gbc.insets = new Insets(8, 8, 8, 8);
 
         // Título
-        JLabel lblTitulo = new JLabel("Registro de Usuario");
+        JLabel lblTitulo = new JLabel("Registro de Cliente");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -161,38 +162,26 @@ public class Registro extends JFrame {
         });
     }
 
-    // Guardar usuario en CSV
+    // Guardar usuario 
     private void registerUser(String username, String password, String email, String phone, String address, String postalCode, LocalDate birthDate) {
-//        try (BufferedWriter bw = new BufferedWriter(new FileWriter("resources/data/usuarios.csv", true))) {
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(birthDate);
-//            String fechaStr = String.format("%02d-%02d-%04d", cal.get(Calendar.DAY_OF_MONTH),
-//                    cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
-//
-//            bw.write(username + ";" + password + ";" + email + ";" + phone + ";" + address + ";" + postalCode + ";" + fechaStr);
-//            bw.newLine();
-//            bw.flush();
-//            System.out.println("Usuario guardado en CSV");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//            Calendar cal = Calendar.getInstance();
-//    	String fechaStr = String.format("%02d-%02d-%04d", cal.get(Calendar.DAY_OF_MONTH),
-//    			   cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
-    	
-    	Cliente cliente = new Cliente(username, email,  phone, address+";"+postalCode,  password,  birthDate.toString());
-    	UsuarioDAO uDao = new UsuarioDAO();
-    	boolean resultado = uDao.insertar(cliente);
-    	
-    	if (resultado == true) {
-    		JOptionPane.showMessageDialog(panel, "Cuenta creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    	}else {
-    		JOptionPane.showMessageDialog(panel, "Error al crear la cuenta.", "Fallo", JOptionPane.WARNING_MESSAGE);
-    	}
-    	
-    	
-    	
+
+        // Concatenar dirección con código postal
+        String direccionCompleta = address + "; " + postalCode;
+
+        // Crear objeto Cliente
+        Cliente cliente = new Cliente(username, email, phone, direccionCompleta, password, birthDate.toString());
+
+        // Guardar en BD usando ClienteDao
+        ClienteDAO cDao = new ClienteDAO();
+        boolean resultado = cDao.insertar(cliente);
+
+        if (resultado) {
+            JOptionPane.showMessageDialog(panel, "Cuenta creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(panel, "Error al crear la cuenta. El email podría existir.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
 
     // Diálogo de consentimiento para menores
     private void showConsentDialog(String username, String password, String email, String phone, String address, String postalCode, LocalDate birthDate) {

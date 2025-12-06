@@ -3,6 +3,11 @@ package database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.List;
+
+import domain.DescuentoPelicula;
+import domain.Sesion;
 
 public class DBInitializer {
 
@@ -12,7 +17,7 @@ public class DBInitializer {
         try {
             conn = DBConnection.getConnection();
             stmt = conn.createStatement();
-
+/*
             // Tabla usuario (con UNIQUE en email)
          // Tabla usuario
             stmt.executeUpdate(
@@ -25,7 +30,7 @@ public class DBInitializer {
                 " nif TEXT," +
                 " fechaNacimiento TEXT" +
                 ");"
-            );
+            );*/
 
             // Insertar dos usuarios entidad (empresa)
             stmt.executeUpdate(
@@ -33,6 +38,37 @@ public class DBInitializer {
                 "('Empresa CineDeusto SA', 'contacto@cineempresa.com', '944123456', 'Bilbao', '1234', 'A12345678', NULL), " +
                 "('Servicios Culturales Donosti SL', 'info@servcultural.com', '943987654', 'San Sebastián', '1234', 'B87654321', NULL);"
             );
+            
+            // Tabla Cliente
+            
+            stmt.executeUpdate(
+            "CREATE TABLE IF NOT EXISTS cliente (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    " nombre TEXT NOT NULL," +
+                    " email TEXT UNIQUE NOT NULL," +
+                    " telefono TEXT," +
+                    "  direccion TEXT," +
+                    " contrasenya TEXT NOT NULL," +
+                    " fechaNacimiento TEXT"+
+            	");");
+            
+             // Tabla Entidad
+            
+            stmt.executeUpdate(
+            "CREATE TABLE IF NOT EXISTS entidad (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    " nombre TEXT NOT NULL," +
+                    " email TEXT UNIQUE NOT NULL," +
+                    " telefono TEXT," +
+                    "  direccion TEXT," +
+                    " contrasenya TEXT NOT NULL," +
+                    " nif TEXT"+
+                    ");"
+                   
+            	);
+            
+            
+
 
             // Tabla pelicula 
             stmt.executeUpdate(
@@ -52,10 +88,12 @@ public class DBInitializer {
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS sesion (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " id_entidad INTEGER NOT NULL,"+		
                 " id_pelicula INTEGER NOT NULL," +
                 " fecha TEXT NOT NULL," +
                 " hora TEXT NOT NULL," +
                 " sala TEXT NOT NULL," +
+                "FOREIGN KEY(id_entidad) REFERENCES entidad(id),"+
                 " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
                 ");"
             );
@@ -64,9 +102,12 @@ public class DBInitializer {
             // Tabla descuento
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS descuento (" +
-                " id TEXT PRIMARY KEY," +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id_entidad INTEGER NOT NULL,"+
                 " codigo TEXT NOT NULL UNIQUE," +
-                " porcentaje REAL NOT NULL" +
+                " porcentaje REAL NOT NULL," +
+                "FOREIGN KEY(id_entidad) REFERENCES entidad(id)"+
+                
                 ");"
             );
             

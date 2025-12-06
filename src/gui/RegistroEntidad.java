@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.swing.*;
 
+import dao.EntidadDAO;
 import dao.UsuarioDAO;
 import domain.Entidad;
 
@@ -138,8 +139,8 @@ public class RegistroEntidad extends JFrame {
 //    }
     private void registrarEntidad(String nombre, String password, String email, String telefono, String direccion, String nif) {
         Entidad entidad = new Entidad(nombre, email, telefono, direccion, password, nif);
-        UsuarioDAO uDao = new UsuarioDAO();
-        boolean resultado = uDao.insertar(entidad);
+        EntidadDAO eDao = new EntidadDAO();
+        boolean resultado = eDao.insertar(entidad);
         
         if (resultado) {
             System.out.println("Entidad guardada en BD correctamente");
