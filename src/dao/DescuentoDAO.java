@@ -27,8 +27,6 @@ public class DescuentoDAO {
 	}
 	public boolean insertar(DescuentoPelicula d) {
 	
-		
-		
 		String sql = "INSERT INTO descuento (codigo, porcentaje) VALUES (?, ?)";
 		try (Connection conn= DBConnection.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)){
@@ -45,6 +43,30 @@ public class DescuentoDAO {
 		}
 	
 	
-}
+	}
+	// Busca un descuento por su código (lo usa la ruleta de PagoEntrada)
+	public DescuentoPelicula buscarPorCodigo(String codigo) {
+	    String sql = "SELECT id, codigo, porcentaje FROM descuento WHERE codigo = ?";
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setString(1, codigo);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                int id = rs.getInt("id");
+	                String cod = rs.getString("codigo");
+	                double porcentaje = rs.getDouble("porcentaje");
+
+	                return new DescuentoPelicula(id, cod, porcentaje);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;
+	}
 
 }
