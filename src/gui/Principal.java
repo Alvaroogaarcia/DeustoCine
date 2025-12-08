@@ -42,11 +42,11 @@ public class Principal extends JFrame{
 		btnComprarEntradas.setPreferredSize(new Dimension(200, 40));
 		panel.add(btnComprarEntradas);
 
-		// Abre la ventana de compra de entradas
+	/*	// Abre la ventana de compra de entradas
 		btnComprarEntradas.addActionListener(e -> {
 		    CompraEntradas ce = new CompraEntradas();
 		    ce.setVisible(true);
-		});
+		});*/
 		
 	}
 	

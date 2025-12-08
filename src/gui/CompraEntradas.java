@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import dao.PeliculaDAO;
 import dao.SesionDAO;
 import domain.Sesion;
+import domain.Usuario;
 
 
 public class CompraEntradas extends JFrame{
@@ -41,8 +42,9 @@ public class CompraEntradas extends JFrame{
 
 	private SesionDAO sesionDAO;
 	private PeliculaDAO peliculaDAO;
+	private Usuario u;
 	
-	public CompraEntradas() {
+	public CompraEntradas(Usuario u) {
 		sesionDAO = new SesionDAO();
 		peliculaDAO = new PeliculaDAO();
 		
@@ -52,6 +54,7 @@ public class CompraEntradas extends JFrame{
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout(10, 10));
+		this.u = u;
 	
 		// Panel superior con buscador y botones
 		JPanel panelSuperior = new JPanel(new BorderLayout(5, 5));
@@ -235,10 +238,5 @@ public class CompraEntradas extends JFrame{
 		dialogo.setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> {
-			CompraEntradas ce = new CompraEntradas();
-			ce.setVisible(true);
-		});
+	
 	}
-}

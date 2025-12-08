@@ -116,7 +116,7 @@ public class Login extends JFrame {
                 dispose();
 
                 if (u instanceof Cliente){
-                    new Principal(u).setVisible(true);
+                    new CompraEntradas(u).setVisible(true);
                 } else {
                     new PerfilEntidad((Entidad) u).setVisible(true);
                 }

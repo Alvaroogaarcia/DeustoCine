@@ -118,34 +118,7 @@ public class PerfilCliente extends JFrame {
         }
     }
 
-    // Código comentado original para cargar datos desde CSV
-    /*
-    private void cargarDatosCliente(String email) {
-        File file = new File("resources/data/usuarios.csv");
-        if (!file.exists()) {
-            JOptionPane.showMessageDialog(this, "No se encontró el archivo de usuarios.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(";");
-                if (datos.length >= 6 && datos[2].equals(email)) {
-                    lblNombre.setText("Nombre: " + datos[0]);
-                    lblEmail.setText("Email: " + datos[2]);
-                    lblTelefono.setText("Teléfono: " + datos[3]);
-                    lblDireccion.setText("Dirección: " + datos[4]);
-                    lblCP.setText("Código Postal: " + datos[5]);
-                    return;
-                }
-            }
-            JOptionPane.showMessageDialog(this, "No se encontraron datos para este cliente.", "Aviso", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    */
+   
 
     // Método main para pruebas
     public static void main(String[] args) {
