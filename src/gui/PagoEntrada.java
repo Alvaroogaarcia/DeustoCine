@@ -24,7 +24,6 @@ public class PagoEntrada extends JFrame{
     private JButton btnRuleta;
     private JButton btnPagar;
 
-    // Panel y casillas de la "ruleta"
     private JPanel panelRuleta;
     private JLabel[] casillas;
 
@@ -35,7 +34,7 @@ public class PagoEntrada extends JFrame{
     private final int[] DESCUENTOS = {0, 5, 10, 15, 20, 25, 30, 40};
 
     public PagoEntrada() {
-        this(8.50); // precio base por defecto
+        this(10.0); // precio base por defecto
     }
 
     public PagoEntrada(double precioBase) {
@@ -67,8 +66,8 @@ public class PagoEntrada extends JFrame{
         gbc.gridy = 1;
         add(lblPrecioFinal, gbc);
 
-        // --------- RULETA VISUAL ----------
-        panelRuleta = new JPanel(); // por defecto FlowLayout, vale para poner las casillas en fila
+        // Ruleta
+        panelRuleta = new JPanel(); 
         casillas = new JLabel[DESCUENTOS.length];
 
         for (int i = 0; i < DESCUENTOS.length; i++) {
@@ -85,7 +84,7 @@ public class PagoEntrada extends JFrame{
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         add(panelRuleta, gbc);
-        // -----------------------------------
+
 
         // Mensaje de estado
         lblEstado = new JLabel("Pulsa \"Girar ruleta\" para intentar conseguir un descuento.");
@@ -106,7 +105,7 @@ public class PagoEntrada extends JFrame{
         gbc.gridy = 4;
         add(btnPagar, gbc);
 
-        // Listeners
+
         btnRuleta.addActionListener(e -> lanzarRuleta());
         btnPagar.addActionListener(e -> dispose());
     }
@@ -128,7 +127,7 @@ public class PagoEntrada extends JFrame{
             int vueltas = 40;  // número de saltos
             Random random = new Random();
 
-            // Animación: va recorriendo casillas y se frena
+            // Animación
             for (int i = 0; i < vueltas; i++) {
                 int anterior = indice;
                 indice = (indice + 1) % casillas.length;
@@ -154,11 +153,10 @@ public class PagoEntrada extends JFrame{
                 espera += 10; // cada vez más lento
             }
 
-            // Resultado final (usamos la casilla donde se ha parado)
+            // Resultado final
             int descuentoFinal = DESCUENTOS[indice];
             double precioFinal = precioBase * (1 - descuentoFinal / 100.0);
 
-            // Copias finales para poder usarlas dentro de la lambda
             final int indiceFinal = indice;
             final int descuentoFinalF = descuentoFinal;
             final double precioFinalF = precioFinal;
@@ -181,7 +179,7 @@ public class PagoEntrada extends JFrame{
 
         hilo.start();
     }
-    // Para el texto "Girando ruleta..."
+
     private String puntosRuleta(int n) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
@@ -190,7 +188,6 @@ public class PagoEntrada extends JFrame{
         return sb.toString();
     }
 
-    // main de prueba independiente
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new PagoEntrada().setVisible(true));
     }
