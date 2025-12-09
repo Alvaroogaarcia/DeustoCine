@@ -1,17 +1,23 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.LocalDate;
 import java.util.Random;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import dao.DescuentoDAO;
+import domain.DescuentoPelicula;
 
 
 public class PagoEntrada extends JFrame{
@@ -30,16 +36,39 @@ public class PagoEntrada extends JFrame{
     private double precioBase;
     private boolean ruletaUsada = false;
 
-    // Descuentos posibles
-    private final int[] DESCUENTOS = {0, 5, 10, 15, 20, 25, 30, 40};
 
-    public PagoEntrada() {
-        this(10.0); // precio base por defecto
+    private String generoPelicula;
+
+    // Para limitar la ruleta a una vez al día
+    private static LocalDate ultimaFechaRuleta = null;
+
+
+    private final String[] CASILLAS_TEXTOS = {
+            "NO HAY", "DESCUENTO", "NO HAY", "NO HAY",
+            "DESCUENTO", "NO HAY", "NO HAY", "NO HAY"
+    };
+
+    public PagoEntrada(String generoPelicula) {
+        this(10.0, generoPelicula);
     }
 
-    public PagoEntrada(double precioBase) {
+    public PagoEntrada() {
+        this(10.0, null);
+    }
+
+    public PagoEntrada(double precioBase, String generoPelicula) {
         this.precioBase = precioBase;
+        this.generoPelicula = generoPelicula;
         inicializarVentana();
+    }
+    
+    private boolean puedeUsarRuletaHoy() {
+        LocalDate hoy = LocalDate.now();
+        if (ultimaFechaRuleta == null || !ultimaFechaRuleta.equals(hoy)) {
+            ultimaFechaRuleta = hoy;
+            return true;
+        }
+        return false;
     }
 
     private void inicializarVentana() {
@@ -49,10 +78,13 @@ public class PagoEntrada extends JFrame{
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
+        ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+       
 
         // Precio base
         lblPrecioBase = new JLabel("Precio base: " + String.format("%.2f €", precioBase));
@@ -68,10 +100,10 @@ public class PagoEntrada extends JFrame{
 
         // Ruleta
         panelRuleta = new JPanel(); 
-        casillas = new JLabel[DESCUENTOS.length];
+        casillas = new JLabel[CASILLAS_TEXTOS.length];
 
-        for (int i = 0; i < DESCUENTOS.length; i++) {
-            JLabel lbl = new JLabel(DESCUENTOS[i] + "%");
+        for (int i = 0; i < CASILLAS_TEXTOS.length; i++) {
+            JLabel lbl = new JLabel(CASILLAS_TEXTOS[i]);
             lbl.setOpaque(true);
             lbl.setBackground(Color.LIGHT_GRAY);
             lbl.setForeground(Color.BLACK);
@@ -92,17 +124,22 @@ public class PagoEntrada extends JFrame{
         add(lblEstado, gbc);
 
         gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;   // que los botones no se estiren
+        gbc.anchor = GridBagConstraints.CENTER;
 
-        // Botón ruleta
+     // Botón ruleta
         btnRuleta = new JButton("Girar ruleta");
         gbc.gridx = 0;
         gbc.gridy = 4;
+        Dimension tamBoton = new Dimension(130, 30);
+        btnRuleta.setPreferredSize(tamBoton);
         add(btnRuleta, gbc);
 
         // Botón pagar
         btnPagar = new JButton("Pagar");
         gbc.gridx = 1;
         gbc.gridy = 4;
+        btnPagar.setPreferredSize(tamBoton);
         add(btnPagar, gbc);
 
 
@@ -112,8 +149,14 @@ public class PagoEntrada extends JFrame{
 
     // Lanza el hilo que hace girar la ruleta
     private void lanzarRuleta() {
-    	if (ruletaUsada) {
+        if (ruletaUsada) {
             lblEstado.setText("Ya has usado la ruleta para esta compra.");
+            return;
+        }
+
+        // Limitar a una vez al día
+        if (!puedeUsarRuletaHoy()) {
+            lblEstado.setText("Ya has usado la ruleta hoy. Vuelve mañana.");
             return;
         }
 
@@ -123,9 +166,8 @@ public class PagoEntrada extends JFrame{
         Thread hilo = new Thread(() -> {
 
             int indice = 0;
-            int espera = 40;   // empieza rápido
-            int vueltas = 40;  // número de saltos
-            Random random = new Random();
+            int espera = 40;   
+            int vueltas = 40;  
 
             // Animación
             for (int i = 0; i < vueltas; i++) {
@@ -137,9 +179,7 @@ public class PagoEntrada extends JFrame{
                 final int idxAnterior = anterior;
 
                 SwingUtilities.invokeLater(() -> {
-                    // desmarcar anterior
                     casillas[idxAnterior].setBackground(Color.LIGHT_GRAY);
-                    // marcar actual
                     casillas[idxActual].setBackground(Color.YELLOW);
                     lblEstado.setText("Girando ruleta" + puntosRuleta(paso % 4));
                 });
@@ -150,30 +190,51 @@ public class PagoEntrada extends JFrame{
                     return;
                 }
 
-                espera += 10; // cada vez más lento
+                espera += 10; 
             }
 
-            // Resultado final
-            int descuentoFinal = DESCUENTOS[indice];
-            double precioFinal = precioBase * (1 - descuentoFinal / 100.0);
+            // Resultado final: casilla donde se ha parado
+            String textoCasilla = CASILLAS_TEXTOS[indice];
 
             final int indiceFinal = indice;
-            final int descuentoFinalF = descuentoFinal;
-            final double precioFinalF = precioFinal;
+            final String textoFinal = textoCasilla;
 
+            // Pintamos solo la casilla final en verde
             SwingUtilities.invokeLater(() -> {
-                // aseguramos que solo la casilla final queda marcada
                 for (int i = 0; i < casillas.length; i++) {
                     casillas[i].setBackground(i == indiceFinal ? Color.GREEN : Color.LIGHT_GRAY);
                 }
+            });
 
-                lblPrecioFinal.setText("Precio final: " + String.format("%.2f €", precioFinalF));
-
-                if (descuentoFinalF == 0) {
+            // Si no hay descuento, solo mostramos mensaje y salimos
+            if (!"DESCUENTO".equalsIgnoreCase(textoFinal)) {
+                SwingUtilities.invokeLater(() -> {
                     lblEstado.setText("No ha habido suerte, sin descuento esta vez.");
-                } else {
-                    lblEstado.setText("¡Enhorabuena! Descuento aplicado: " + descuentoFinalF + "%");
-                }
+                });
+                return;
+            }
+
+            // Si toca DESCUENTO: pedimos un descuento aleatorio de ese género a la BD
+            DescuentoDAO dao = new DescuentoDAO();
+            DescuentoPelicula descuento = dao.obtenerDescuentoAleatorioPorGenero(generoPelicula);
+
+            if (descuento == null) {
+                SwingUtilities.invokeLater(() -> {
+                    lblEstado.setText("No hay descuentos disponibles para este género.");
+                });
+                return;
+            }
+
+            double porcentaje = descuento.getPorcentaje();
+            double precioFinal = precioBase * (1 - porcentaje / 100.0);
+
+            final double precioFinalF = precioFinal;
+            final double porcentajeF = porcentaje;
+            final String codigoF = descuento.getCodigo();
+
+            SwingUtilities.invokeLater(() -> {
+                lblPrecioFinal.setText("Precio final: " + String.format("%.2f €", precioFinalF));
+                lblEstado.setText("¡Descuento aplicado (" + porcentajeF + "%, código " + codigoF + ")!");
             });
         });
 
