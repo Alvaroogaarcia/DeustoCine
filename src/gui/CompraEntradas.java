@@ -44,7 +44,7 @@ public class CompraEntradas extends JFrame{
 	private PeliculaDAO peliculaDAO;
 	private Usuario u;
 	
-	public CompraEntradas(Usuario u) {
+	public CompraEntradas() {
 		sesionDAO = new SesionDAO();
 		peliculaDAO = new PeliculaDAO();
 		

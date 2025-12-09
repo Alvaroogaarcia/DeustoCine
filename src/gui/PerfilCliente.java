@@ -7,15 +7,19 @@ import domain.Cliente;
 import domain.Usuario;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
 public class PerfilCliente extends JFrame {
 
     private String emailCliente;
-    private JLabel lblNombre, lblEmail, lblTelefono, lblDireccion, lblCP;
+    private JLabel lblNombre, lblEmail, lblTelefono, lblDireccion, lblFechaN;
+    private Cliente cliente;
+    private JButton btnVolver;
 
-    public PerfilCliente(String email) {
-        this.emailCliente = email;
+    public PerfilCliente(Cliente cliente) {
+        this.cliente = cliente;
 
         // Configuración de la ventana
         setTitle("Deusto Cine - Perfil Cliente");
@@ -47,7 +51,9 @@ public class PerfilCliente extends JFrame {
         lblEmail = new JLabel("Email: ");
         lblTelefono = new JLabel("Teléfono: ");
         lblDireccion = new JLabel("Dirección: ");
-        lblCP = new JLabel("Código Postal: ");
+        lblFechaN = new JLabel("Fecha de nacimiento ");
+        
+        
 
         // Color de texto uniforme
         Color colorTexto = new Color(60, 60, 60);
@@ -55,7 +61,9 @@ public class PerfilCliente extends JFrame {
         lblEmail.setForeground(colorTexto);
         lblTelefono.setForeground(colorTexto);
         lblDireccion.setForeground(colorTexto);
-        lblCP.setForeground(colorTexto);
+        lblFechaN.setForeground(colorTexto);
+        
+        
 
         // Añadimos los labels
         add(lblNombre, gbc);
@@ -66,63 +74,66 @@ public class PerfilCliente extends JFrame {
         gbc.gridy++;
         add(lblDireccion, gbc);
         gbc.gridy++;
-        add(lblCP, gbc);
+        add(lblFechaN, gbc);
         gbc.gridy++;
 
-        // Botón para cerrar sesión
+        // Botones cerrar sesión y volver
         JButton btnCerrarSesion = new JButton("Cerrar Sesión");
         btnCerrarSesion.setBackground(new Color(70, 130, 180));
         btnCerrarSesion.setForeground(Color.WHITE);
         btnCerrarSesion.setFocusPainted(false);
         btnCerrarSesion.setPreferredSize(new Dimension(150, 30));
+        
+        btnVolver = new JButton("Volver");
+        btnVolver.setBackground(new Color(70, 130, 180));
+        btnVolver.setForeground(Color.WHITE);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setPreferredSize(new Dimension(150, 30));
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(btnCerrarSesion, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(btnVolver, gbc);
 
         // Acción del botón
         btnCerrarSesion.addActionListener(e -> {
             dispose();
             new Login().setVisible(true);
         });
+        
+        btnVolver.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				dispose();
+				Principal p = new Principal(cliente);
+				p.setVisible(true);
+				
+			}
+		});
 
         // Cargar los datos del cliente desde la base de datos
-        cargarDatosCliente(email);
+        cargarDatosCliente(cliente);
     }
 
     // Método que carga los datos del cliente desde la base de datos
-    private void cargarDatosCliente(String email) {
-        UsuarioDAO dao = new UsuarioDAO();
-        Usuario u = dao.buscarPorEmail(email);
-
-        if (u != null && u instanceof Cliente) {
-            Cliente cliente = (Cliente) u;
-            lblNombre.setText("Nombre: " + cliente.getNombre());
-            lblEmail.setText("Email: " + cliente.getEmail());
-            lblTelefono.setText("Teléfono: " + cliente.getNumTelefono());
-
-            // La dirección se guardó como "direccion;codigoPostal"
-            String direccionCompleta = cliente.getDireccion();
-            if (direccionCompleta != null && direccionCompleta.contains(";")) {
-                String[] partes = direccionCompleta.split(";", 2);
-                lblDireccion.setText("Dirección: " + partes[0]);
-                lblCP.setText("Código Postal: " + (partes.length > 1 ? partes[1] : "N/A"));
-            } else {
-                lblDireccion.setText("Dirección: " + (direccionCompleta != null ? direccionCompleta : "N/A"));
-                lblCP.setText("Código Postal: N/A");
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "No se encontraron datos para este cliente.", "Aviso", JOptionPane.WARNING_MESSAGE);
-        }
+    private void cargarDatosCliente(Cliente cliente) {
+    	lblNombre.setText("Nombre: " + cliente.getNombre());
+        lblEmail.setText("Email: " + cliente.getEmail());
+        lblTelefono.setText("Teléfono: " + cliente.getNumTelefono());
+        lblDireccion.setText("Dirección: " + cliente.getDireccion());
+        lblFechaN.setText("NIF: " + cliente.getFechaNacimiento());
     }
 
    
 
-    // Método main para pruebas
-    public static void main(String[] args) {
-        new PerfilCliente("cliente@correo.com").setVisible(true);
-    }
 }
 

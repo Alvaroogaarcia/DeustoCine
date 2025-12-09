@@ -4,6 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import domain.Cliente;
 import domain.Usuario;
 
 import java.awt.BorderLayout;
@@ -15,13 +16,13 @@ import javax.swing.JPanel;
 
 public class Principal extends JFrame{
 	
-	private Usuario u;
+	private Cliente c;
 
-	public Principal(Usuario u) {
+	public Principal(Cliente c) {
 		// TODO Auto-generated constructor stub
 		
 		//Configuracion inicial de la ventana
-		this.u = u;
+		this.c = c;
 
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
@@ -41,12 +42,24 @@ public class Principal extends JFrame{
 		JButton btnComprarEntradas = new JButton("Comprar entradas");
 		btnComprarEntradas.setPreferredSize(new Dimension(200, 40));
 		panel.add(btnComprarEntradas);
+		
+		// Boton para ir a la pantalla de perfil 
+		JButton btnPerfilCiente = new JButton("Perfil");
+		btnPerfilCiente.setPreferredSize(new Dimension(200, 40));
+		panel.add(btnPerfilCiente);
 
-	/*	// Abre la ventana de compra de entradas
+		// Abre la ventana de compra de entradas
 		btnComprarEntradas.addActionListener(e -> {
 		    CompraEntradas ce = new CompraEntradas();
 		    ce.setVisible(true);
-		});*/
+		});
+		
+		// Abre la ventana de compra de perfil
+		btnPerfilCiente.addActionListener(e -> {
+			dispose();
+				    PerfilCliente ce = new PerfilCliente(this.c);
+				    ce.setVisible(true);
+				});
 		
 	}
 	
