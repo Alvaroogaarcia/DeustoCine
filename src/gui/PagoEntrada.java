@@ -1,7 +1,9 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,7 +33,12 @@ public class PagoEntrada extends JFrame{
     private JButton btnPagar;
 
     private JPanel panelRuleta;
+    private JPanel panelbotones;
+    private JPanel panelAtras;
+    private JPanel panelPrecio;
     private JLabel[] casillas;
+    private JPanel panelbotones1;
+    private JPanel panelGirar;
 
     private double precioBase;
     private boolean ruletaUsada = false;
@@ -44,8 +51,8 @@ public class PagoEntrada extends JFrame{
 
 
     private final String[] CASILLAS_TEXTOS = {
-            "NO HAY", "DESCUENTO", "NO HAY", "NO HAY",
-            "DESCUENTO", "NO HAY", "NO HAY", "NO HAY"
+            "DESCUENTO", "DESCUENTO", "DESCUENTO", "NO HAY",
+            "DESCUENTO", "DESCUENTO", "NO HAY", "DESCUENTO"
     };
 
     public PagoEntrada(String generoPelicula) {
@@ -77,29 +84,46 @@ public class PagoEntrada extends JFrame{
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(new GridBagLayout());
-        ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        
+        panelAtras = new JPanel();
+        panelbotones = new JPanel();
+        panelPrecio = new JPanel();
+        panelRuleta = new JPanel();
+        panelbotones1 = new JPanel();
+        panelGirar = new JPanel();
+        
+        this.add(panelAtras);
+        panelAtras.setLayout(new BorderLayout());
+        panelAtras.add(panelRuleta, BorderLayout.NORTH);
+        panelAtras.add(panelPrecio, BorderLayout.CENTER);
+        panelAtras.add(panelbotones, BorderLayout.SOUTH);
+        
+        panelbotones.setLayout(new BorderLayout());
+        panelRuleta.setLayout(new FlowLayout());
+        panelPrecio.setLayout(new FlowLayout());
+        panelbotones1.setLayout(new FlowLayout());
+        panelGirar.setLayout(new FlowLayout());
+        
+        panelbotones.add(panelbotones1, BorderLayout.CENTER);
+        panelbotones.add(panelGirar, BorderLayout.NORTH);
+        
+        
+        
         
        
 
         // Precio base
         lblPrecioBase = new JLabel("Precio base: " + String.format("%.2f €", precioBase));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(lblPrecioBase, gbc);
+        panelPrecio.add(lblPrecioBase);
 
         // Precio final
         lblPrecioFinal = new JLabel("Precio final: " + String.format("%.2f €", precioBase));
-        gbc.gridy = 1;
-        add(lblPrecioFinal, gbc);
+        
+        panelPrecio.add(lblPrecioFinal);
 
         // Ruleta
-        panelRuleta = new JPanel(); 
+        
         casillas = new JLabel[CASILLAS_TEXTOS.length];
 
         for (int i = 0; i < CASILLAS_TEXTOS.length; i++) {
@@ -112,35 +136,29 @@ public class PagoEntrada extends JFrame{
             panelRuleta.add(lbl);
         }
 
-        gbc.gridy = 2;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        add(panelRuleta, gbc);
+        
+        
 
 
         // Mensaje de estado
-        lblEstado = new JLabel("Pulsa \"Girar ruleta\" para intentar conseguir un descuento.");
-        gbc.gridy = 3;
-        add(lblEstado, gbc);
-
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;   // que los botones no se estiren
-        gbc.anchor = GridBagConstraints.CENTER;
+        lblEstado = new JLabel("Gira la ruleta conseguir tu descuento.");
+        
+        panelGirar.add(lblEstado);
 
      // Botón ruleta
         btnRuleta = new JButton("Girar ruleta");
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        Dimension tamBoton = new Dimension(130, 30);
-        btnRuleta.setPreferredSize(tamBoton);
-        add(btnRuleta, gbc);
+        
+        //Dimension tamBoton = new Dimension(50, 70);
+        //btnRuleta.setPreferredSize(tamBoton);
+        panelbotones1.add(btnRuleta);
+        
+        
+
 
         // Botón pagar
         btnPagar = new JButton("Pagar");
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        btnPagar.setPreferredSize(tamBoton);
-        add(btnPagar, gbc);
+        //btnPagar.setPreferredSize(tamBoton);
+        panelbotones1.add(btnPagar);
 
 
         btnRuleta.addActionListener(e -> lanzarRuleta());

@@ -228,10 +228,11 @@ public class CompraEntradas extends JFrame{
 		JButton btnComprar = new JButton("Comprar entrada");
 		btnComprar.setPreferredSize(new Dimension(160, 35));
 		btnComprar.addActionListener(e -> {
-			String genero = pelicula.getGenero();
+			dialogo.dispose();
+			
 			PagoEntrada ventanaPago = new PagoEntrada();
 			ventanaPago.setVisible(true);
-			dialogo.dispose();
+			
 		});
 		panelBoton.add(btnComprar);
 		dialogo.add(panelBoton, BorderLayout.SOUTH);
