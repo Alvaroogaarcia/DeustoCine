@@ -230,7 +230,7 @@ public class CompraEntradas extends JFrame{
 		btnComprar.addActionListener(e -> {
 			dialogo.dispose();
 			
-			PagoEntrada ventanaPago = new PagoEntrada();
+			PagoEntrada ventanaPago = new PagoEntrada(10.0, pelicula.getGenero());
 			ventanaPago.setVisible(true);
 			
 		});
