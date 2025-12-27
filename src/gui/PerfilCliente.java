@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 
+import dao.ClienteDAO;
 import dao.UsuarioDAO;
 import domain.Cliente;
 import domain.Usuario;
@@ -17,6 +18,8 @@ public class PerfilCliente extends JFrame {
     private JLabel lblNombre, lblEmail, lblTelefono, lblDireccion, lblFechaN;
     private Cliente cliente;
     private JButton btnVolver;
+    private JLabel lblSaldo;
+
 
     public PerfilCliente(Cliente cliente) {
         this.cliente = cliente;
@@ -52,6 +55,9 @@ public class PerfilCliente extends JFrame {
         lblTelefono = new JLabel("Teléfono: ");
         lblDireccion = new JLabel("Dirección: ");
         lblFechaN = new JLabel("Fecha de nacimiento ");
+        lblSaldo = new JLabel("Saldo: ");
+       
+
         
         
 
@@ -75,6 +81,8 @@ public class PerfilCliente extends JFrame {
         add(lblDireccion, gbc);
         gbc.gridy++;
         add(lblFechaN, gbc);
+        gbc.gridy++;
+        add(lblSaldo, gbc);
         gbc.gridy++;
 
         // Botones cerrar sesión y volver
@@ -101,6 +109,16 @@ public class PerfilCliente extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(btnVolver, gbc);
+        
+        JButton btnRecargar = new JButton("Añadir saldo");
+        add(btnRecargar);
+
+        
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(btnRecargar, gbc);
 
         // Acción del botón
         btnCerrarSesion.addActionListener(e -> {
@@ -119,6 +137,31 @@ public class PerfilCliente extends JFrame {
 				
 			}
 		});
+        
+        btnRecargar.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog(
+                this,
+                "Introduce el importe a recargar (€):"
+            );
+
+            if (input == null) return;
+
+            try {
+                double importe = Double.parseDouble(input);
+                if (importe <= 0) throw new NumberFormatException();
+
+                cliente.setSaldo(cliente.getSaldo() + importe);
+                new ClienteDAO().actualizarSaldo(cliente);
+
+                lblSaldo.setText("Saldo: " + String.format("%.2f €", cliente.getSaldo()));
+
+                JOptionPane.showMessageDialog(this, "Saldo añadido correctamente");
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Importe inválido");
+            }
+        });
+
 
         // Cargar los datos del cliente desde la base de datos
         cargarDatosCliente(cliente);
@@ -131,6 +174,12 @@ public class PerfilCliente extends JFrame {
         lblTelefono.setText("Teléfono: " + cliente.getNumTelefono());
         lblDireccion.setText("Dirección: " + cliente.getDireccion());
         lblFechaN.setText("NIF: " + cliente.getFechaNacimiento());
+        Double saldoObj = cliente.getSaldo();
+        double saldo = (saldoObj != null) ? saldoObj : 0.0;
+        lblSaldo.setText(String.format("%.2f €", saldo));
+
+
+
     }
 
    

@@ -50,7 +50,7 @@ public class Principal extends JFrame{
 
 		// Abre la ventana de compra de entradas
 		btnComprarEntradas.addActionListener(e -> {
-		    CompraEntradas ce = new CompraEntradas();
+		    CompraEntradas ce = new CompraEntradas(c);
 		    ce.setVisible(true);
 		});
 		

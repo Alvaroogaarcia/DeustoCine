@@ -14,11 +14,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import dao.ClienteDAO;
 import dao.DescuentoDAO;
+import domain.Cliente;
 import domain.DescuentoPelicula;
 
 
@@ -40,11 +43,17 @@ public class PagoEntrada extends JFrame{
     private JPanel panelbotones1;
     private JPanel panelGirar;
 
-    private double precioBase;
+    private double precioBase = 10.0;
     private boolean ruletaUsada = false;
+    private Cliente cliente;
+    private double precioFinalActual;
+    
+
 
 
     private String generoPelicula;
+    private int idPelicula;
+
 
     // Para limitar la ruleta a una vez al día
     private static LocalDate ultimaFechaRuleta = null;
@@ -55,19 +64,23 @@ public class PagoEntrada extends JFrame{
             "DESCUENTO", "DESCUENTO", "NO HAY", "DESCUENTO"
     };
 
-    public PagoEntrada(String generoPelicula) {
-        this(10.0, generoPelicula);
-    }
-
-    public PagoEntrada() {
-        this(10.0, null);
-    }
-
-    public PagoEntrada(double precioBase, String generoPelicula) {
-        this.precioBase = precioBase;
+    
+    public PagoEntrada(Cliente cliente, int idPelicula, String generoPelicula) {
+        if (cliente == null) {
+            JOptionPane.showMessageDialog(null, "Error: debe iniciar sesión antes de comprar entradas");
+            throw new IllegalArgumentException("Cliente no puede ser null");
+        }
+        this.cliente = cliente;
+        this.idPelicula = idPelicula;         
         this.generoPelicula = generoPelicula;
+        this.precioFinalActual = precioBase;
         inicializarVentana();
     }
+
+
+
+
+    
     
     private boolean puedeUsarRuletaHoy() {
         LocalDate hoy = LocalDate.now();
@@ -162,7 +175,8 @@ public class PagoEntrada extends JFrame{
 
 
         btnRuleta.addActionListener(e -> lanzarRuleta());
-        btnPagar.addActionListener(e -> dispose());
+        btnPagar.addActionListener(e -> procesarPago());
+
     }
 
     // Lanza el hilo que hace girar la ruleta
@@ -172,7 +186,6 @@ public class PagoEntrada extends JFrame{
             return;
         }
 
-        // Limitar a una vez al día
         if (!puedeUsarRuletaHoy()) {
             lblEstado.setText("Ya has usado la ruleta hoy. Vuelve mañana.");
             return;
@@ -182,12 +195,10 @@ public class PagoEntrada extends JFrame{
         btnRuleta.setEnabled(false);
 
         Thread hilo = new Thread(() -> {
-
             int indice = 0;
-            int espera = 40;   
-            int vueltas = 40;  
+            int espera = 40;
+            int vueltas = 40;
 
-            // Animación
             for (int i = 0; i < vueltas; i++) {
                 int anterior = indice;
                 indice = (indice + 1) % casillas.length;
@@ -202,62 +213,74 @@ public class PagoEntrada extends JFrame{
                     lblEstado.setText("Girando ruleta" + puntosRuleta(paso % 4));
                 });
 
-                try {
-                    Thread.sleep(espera);
-                } catch (InterruptedException e) {
-                    return;
-                }
-
-                espera += 10; 
+                try { Thread.sleep(espera); } catch (InterruptedException e) {}
+                espera += 10;
             }
 
-            // Resultado final: casilla donde se ha parado
             String textoCasilla = CASILLAS_TEXTOS[indice];
-
             final int indiceFinal = indice;
             final String textoFinal = textoCasilla;
 
-            // Pintamos solo la casilla final en verde
             SwingUtilities.invokeLater(() -> {
                 for (int i = 0; i < casillas.length; i++) {
                     casillas[i].setBackground(i == indiceFinal ? Color.GREEN : Color.LIGHT_GRAY);
                 }
             });
 
-            // Si no hay descuento, solo mostramos mensaje y salimos
             if (!"DESCUENTO".equalsIgnoreCase(textoFinal)) {
-                SwingUtilities.invokeLater(() -> {
-                    lblEstado.setText("No ha habido suerte, sin descuento esta vez.");
-                });
+                SwingUtilities.invokeLater(() -> lblEstado.setText("No ha habido suerte, sin descuento esta vez."));
                 return;
             }
 
-            // Si toca DESCUENTO: pedimos un descuento aleatorio de ese género a la BD
             DescuentoDAO dao = new DescuentoDAO();
             DescuentoPelicula descuento = dao.obtenerDescuentoAleatorioPorGenero(generoPelicula);
-
             if (descuento == null) {
-                SwingUtilities.invokeLater(() -> {
-                    lblEstado.setText("No hay descuentos disponibles para este género.");
-                });
+                SwingUtilities.invokeLater(() -> lblEstado.setText("No hay descuentos disponibles para este género."));
                 return;
             }
 
             double porcentaje = descuento.getPorcentaje();
-            double precioFinal = precioBase * (1 - porcentaje / 100.0);
-
-            final double precioFinalF = precioFinal;
-            final double porcentajeF = porcentaje;
-            final String codigoF = descuento.getCodigo();
+            this.precioFinalActual = precioBase * (1 - porcentaje / 100.0);
 
             SwingUtilities.invokeLater(() -> {
-                lblPrecioFinal.setText("Precio final: " + String.format("%.2f €", precioFinalF));
-                lblEstado.setText("¡Descuento aplicado (" + porcentajeF + "%, código " + codigoF + ")!");
+                lblPrecioFinal.setText("Precio final: " + String.format("%.2f €", precioFinalActual));
+                lblEstado.setText("¡Descuento aplicado (" + porcentaje + "%, código " + descuento.getCodigo() + ")!");
             });
         });
 
         hilo.start();
     }
+    
+    private void procesarPago() {
+        if (cliente.getSaldo() < precioFinalActual) {
+            JOptionPane.showMessageDialog(this,
+                    "Saldo insuficiente.\nSaldo actual: " + String.format("%.2f €", cliente.getSaldo()),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int opcion = JOptionPane.showConfirmDialog(this,
+                "Precio final: " + String.format("%.2f €", precioFinalActual) +
+                        "\nSaldo actual: " + String.format("%.2f €", cliente.getSaldo()) +
+                        "\n¿Confirmar pago?",
+                "Confirmar pago", JOptionPane.YES_NO_OPTION);
+
+        if (opcion != JOptionPane.YES_OPTION) return;
+
+        // Actualizar saldo
+        cliente.setSaldo(cliente.getSaldo() - precioFinalActual);
+
+        // Guardar película comprada
+        cliente.agregarCompra(idPelicula);
+
+        // Actualizar en BD
+        new ClienteDAO().actualizarSaldoYCompras(cliente);
+
+        JOptionPane.showMessageDialog(this, "Pago realizado con éxito 🎉");
+        dispose();
+    }
+
+
 
     private String puntosRuleta(int n) {
         StringBuilder sb = new StringBuilder();
@@ -266,8 +289,8 @@ public class PagoEntrada extends JFrame{
         }
         return sb.toString();
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PagoEntrada().setVisible(true));
-    }
+    
+   
 }
+
+    

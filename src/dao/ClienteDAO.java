@@ -19,7 +19,7 @@ public class ClienteDAO {
             pstmt.setString(1, cliente.getNombre());
             pstmt.setString(2, cliente.getEmail());
             pstmt.setString(3, cliente.getNumTelefono());
-            pstmt.setString(4, cliente.getDireccion()); // Puedes concatenar el postal si quieres
+            pstmt.setString(4, cliente.getDireccion());
             pstmt.setString(5, cliente.getContrasenya());
             pstmt.setString(6, cliente.getFechaNacimiento());
 
@@ -31,7 +31,37 @@ public class ClienteDAO {
             return false;
         }
     }
-    
+
+    public void actualizarSaldo(Cliente c) {
+        String sql = "UPDATE cliente SET saldo = ? WHERE email = ?";
+        // PreparedStatement
+    }
+
+    public void actualizarSaldoYCompras(Cliente cliente) {
+        String sql = "UPDATE clientes SET saldo = ?, peliculas_compradas = ? WHERE id = ?";
+
+        try (Connection conn = java.sql.DriverManager.getConnection("jdbc:sqlite:resources/data/deustocine.sqlite");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setDouble(1, cliente.getSaldo());
+
+            // Convierte la lista de películas compradas a texto separado por comas
+            StringBuilder sb = new StringBuilder();
+            for (Integer idPeli : cliente.getIdPeliculasCompradas()) {
+                if (sb.length() > 0) sb.append(",");
+                sb.append(idPeli);
+            }
+            pstmt.setString(2, sb.toString());
+          //  pstmt.setInt(3, cliente.getId());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al actualizar saldo y compras del cliente");
+        }
+    }
+
     public Cliente buscarPorEmail(String email) {
         String sql = "SELECT * FROM cliente WHERE email = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -53,5 +83,4 @@ public class ClienteDAO {
         }
         return null;
     }
-
 }

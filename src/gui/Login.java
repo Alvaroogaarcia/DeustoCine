@@ -100,33 +100,22 @@ public class Login extends JFrame {
         
         // Acción del boton de iniciar sesión
         btnLogin.addActionListener(e -> {
-            String tipo = (String) cmbTipoUsuario.getSelectedItem();
-            String email = txtEmail.getText().trim();
-            String password = new String(txtPassword.getPassword());
+            String emailIngresado = txtEmail.getText().trim();
+            String contrasenaIngresada = new String(txtPassword.getPassword());
 
-            if (email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            ClienteDAO clienteDAO = new ClienteDAO();
+            Cliente cliente = clienteDAO.buscarPorEmail(emailIngresado);
 
-      
-            Usuario u = loginBD(email, password, tipo);
-            if (u != null) {
-                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso como " + tipo + ".");
-                dispose();
-
-                if (u instanceof Cliente){
-                	 Cliente c = (Cliente) u;
-                	 new Principal(c).setVisible(true);
-                } else {
-                    new PerfilEntidad((Entidad) u).setVisible(true);
-                }
-
+            if (cliente != null && cliente.getContrasenya().equals(contrasenaIngresada)) {
+                // Login correcto: abrimos ventana principal pasando el cliente
+                Principal principal = new Principal(cliente);
+                principal.setVisible(true);
+                dispose(); // cerramos la ventana de login
             } else {
-                JOptionPane.showMessageDialog(this, "Correo o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
             }
-
         });
+
 
         // Accion del boton de registro
         btnRegistrar.addActionListener(e -> {
