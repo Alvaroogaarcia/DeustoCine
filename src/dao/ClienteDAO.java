@@ -10,75 +10,88 @@ import domain.Cliente;
 
 public class ClienteDAO {
 
+    // REGISTRAR: No enviamos el saldo explícitamente. La BD pondrá 0.0 por defecto.
     public boolean insertar(Cliente cliente) {
         String sql = "INSERT INTO cliente (nombre, email, telefono, direccion, contrasenya, fechaNacimiento) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
+        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, cliente.getNombre());
             pstmt.setString(2, cliente.getEmail());
-            pstmt.setString(3, cliente.getNumTelefono());
+            // Usamos getNumTelefono porque tu clase Cliente hereda de Usuario
+            pstmt.setString(3, cliente.getNumTelefono()); 
             pstmt.setString(4, cliente.getDireccion());
+            // Ojo: tu clase Cliente usa 'contrasena' en el constructor, pero 'getContrasenya' suele venir de Usuario. 
+            // Asegúrate de usar el getter correcto. Asumo getContrasenya() o getContrasena().
             pstmt.setString(5, cliente.getContrasenya());
+            
+            // Usamos el getter que devuelve String, tal como lo tienes definido
             pstmt.setString(6, cliente.getFechaNacimiento());
 
             int filas = pstmt.executeUpdate();
             return filas > 0;
 
         } catch (SQLException e) {
+            System.err.println("Error al insertar cliente: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
+    // ACTUALIZAR SALDO: Este método conecta tu botón con la base de datos
     public void actualizarSaldo(Cliente c) {
         String sql = "UPDATE cliente SET saldo = ? WHERE email = ?";
-        // PreparedStatement
-    }
-
-    public void actualizarSaldoYCompras(Cliente cliente) {
-        String sql = "UPDATE clientes SET saldo = ?, peliculas_compradas = ? WHERE id = ?";
-
-        try (Connection conn = java.sql.DriverManager.getConnection("jdbc:sqlite:resources/data/deustocine.sqlite");
+        
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setDouble(1, cliente.getSaldo());
-
-            // Convierte la lista de películas compradas a texto separado por comas
-            StringBuilder sb = new StringBuilder();
-            for (Integer idPeli : cliente.getIdPeliculasCompradas()) {
-                if (sb.length() > 0) sb.append(",");
-                sb.append(idPeli);
+            
+            pstmt.setDouble(1, c.getSaldo());
+            pstmt.setString(2, c.getEmail());
+            
+            int filas = pstmt.executeUpdate();
+            if(filas > 0) {
+                System.out.println("Saldo actualizado en BD correctamente: " + c.getSaldo());
+            } else {
+                System.err.println("No se pudo actualizar el saldo (email no encontrado).");
             }
-            pstmt.setString(2, sb.toString());
-          //  pstmt.setInt(3, cliente.getId());
-
-            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Error al actualizar saldo y compras del cliente");
         }
     }
 
+    // LOGIN: Recupera el usuario y SU SALDO
     public Cliente buscarPorEmail(String email) {
         String sql = "SELECT * FROM cliente WHERE email = ?";
+        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
+            
             if (rs.next()) {
-                return new Cliente(
+                // AQUÍ LLAMAMOS A TU CONSTRUCTOR ESPECÍFICO
+                // Orden: nombre, email, telefono, direccion, contrasenya, fechaNacimiento
+                Cliente c = new Cliente(
                     rs.getString("nombre"),
                     rs.getString("email"),
                     rs.getString("telefono"),
                     rs.getString("direccion"),
                     rs.getString("contrasenya"),
-                    rs.getString("fechaNacimiento")
+                    rs.getString("fechaNacimiento") // Tu constructor lo convertirá a LocalDate
                 );
+                
+                // IMPORTANTE: Leemos el saldo de la BD y lo ponemos en el objeto
+                double saldoBD = rs.getDouble("saldo");
+                c.setSaldo(saldoBD);
+                
+                return c;
             }
         } catch (SQLException e) {
+            System.err.println("Error al buscar cliente: " + e.getMessage());
             e.printStackTrace();
         }
         return null;

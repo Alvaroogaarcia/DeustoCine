@@ -274,7 +274,7 @@ public class PagoEntrada extends JFrame{
         cliente.agregarCompra(idPelicula);
 
         // Actualizar en BD
-        new ClienteDAO().actualizarSaldoYCompras(cliente);
+        new ClienteDAO().actualizarSaldo(cliente);
 
         JOptionPane.showMessageDialog(this, "Pago realizado con éxito 🎉");
         dispose();

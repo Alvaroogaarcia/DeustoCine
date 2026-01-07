@@ -3,11 +3,6 @@ package database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.List;
-
-import domain.DescuentoPelicula;
-import domain.Sesion;
 
 public class DBInitializer {
 
@@ -17,9 +12,8 @@ public class DBInitializer {
         try {
             conn = DBConnection.getConnection();
             stmt = conn.createStatement();
-/*
-            // Tabla usuario (con UNIQUE en email)
-         // Tabla usuario
+
+            // Tabla usuario (empresa/admin)
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS usuario (" +
                 " nombre TEXT NOT NULL," +
@@ -30,46 +24,48 @@ public class DBInitializer {
                 " nif TEXT," +
                 " fechaNacimiento TEXT" +
                 ");"
-            );*/
+            );
 
-            // Insertar dos usuarios entidad (empresa)
+            // Insertar empresas por defecto
             stmt.executeUpdate(
                 "INSERT OR IGNORE INTO usuario (nombre, email, numTelefono, direccion, contrasenya, nif, fechaNacimiento) VALUES " +
                 "('Empresa CineDeusto SA', 'contacto@cineempresa.com', '944123456', 'Bilbao', '1234', 'A12345678', NULL), " +
                 "('Servicios Culturales Donosti SL', 'info@servcultural.com', '943987654', 'San Sebastián', '1234', 'B87654321', NULL);"
             );
             
-            // Tabla Cliente
-            
+            // Tabla Cliente (USUARIOS NORMALES) - AQUÍ ESTÁ EL CAMBIO DEL SALDO
             stmt.executeUpdate(
-            "CREATE TABLE IF NOT EXISTS cliente (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    " nombre TEXT NOT NULL," +
-                    " email TEXT UNIQUE NOT NULL," +
-                    " telefono TEXT," +
-                    "  direccion TEXT," +
-                    " contrasenya TEXT NOT NULL," +
-                    " fechaNacimiento TEXT"+
-            	");");
+                "CREATE TABLE IF NOT EXISTS cliente (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " nombre TEXT NOT NULL," +
+                " email TEXT UNIQUE NOT NULL," +
+                " telefono TEXT," +
+                " direccion TEXT," +
+                " contrasenya TEXT NOT NULL," +
+                " fechaNacimiento TEXT," +
+                " saldo REAL DEFAULT 0.0" +  // <--- CAMPO NUEVO
+                ");"
+            );
             
-             // Tabla Entidad
-            
+            // Insertar un cliente de prueba para que puedas entrar sin registrarte
             stmt.executeUpdate(
-            "CREATE TABLE IF NOT EXISTS entidad (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    " nombre TEXT NOT NULL," +
-                    " email TEXT UNIQUE NOT NULL," +
-                    " telefono TEXT," +
-                    "  direccion TEXT," +
-                    " contrasenya TEXT NOT NULL," +
-                    " nif TEXT"+
-                    ");"
-                   
-            	);
-            
-            
+                "INSERT OR IGNORE INTO cliente (nombre, email, telefono, direccion, contrasenya, fechaNacimiento, saldo) VALUES " +
+                "('Cliente Prueba', 'test@test.com', '600000000', 'Calle Falsa 123', '1234', '2000-01-01', 0.0);"
+            );
 
-
+            // Tabla Entidad
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS entidad (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " nombre TEXT NOT NULL," +
+                " email TEXT UNIQUE NOT NULL," +
+                " telefono TEXT," +
+                " direccion TEXT," +
+                " contrasenya TEXT NOT NULL," +
+                " nif TEXT"+
+                ");"
+            );
+            
             // Tabla pelicula 
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS pelicula (" +
@@ -88,92 +84,82 @@ public class DBInitializer {
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS sesion (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " id_entidad INTEGER NOT NULL,"+		
+                " id_entidad INTEGER NOT NULL,"+        
                 " id_pelicula INTEGER NOT NULL," +
                 " fecha TEXT NOT NULL," +
                 " hora TEXT NOT NULL," +
                 " sala TEXT NOT NULL," +
-                "FOREIGN KEY(id_entidad) REFERENCES entidad(id),"+
+                " FOREIGN KEY(id_entidad) REFERENCES entidad(id),"+
                 " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
                 ");"
             );
 
-            
             // Tabla descuento
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS descuento (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "id_entidad INTEGER NOT NULL,"+
+                " id_entidad INTEGER NOT NULL,"+
                 " codigo TEXT NOT NULL UNIQUE," +
                 " porcentaje REAL NOT NULL," +
-                "FOREIGN KEY(id_entidad) REFERENCES entidad(id)"+
-                
+                " FOREIGN KEY(id_entidad) REFERENCES entidad(id)"+
                 ");"
             );
             
             // Tabla entrada
             stmt.executeUpdate(
-            	"CREATE TABLE IF NOT EXISTS entrada (" +
-            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            	" id_sesion INTEGER NOT NULL," +
-            	" fila INTEGER," +
-            	" butaca INTEGER," +
-            	" estado TEXT NOT NULL DEFAULT 'LIBRE'," + 
-            	" UNIQUE(id_sesion, fila, butaca)," +
-            	" FOREIGN KEY(id_sesion) REFERENCES sesion(id)" +
-            	");"
+                "CREATE TABLE IF NOT EXISTS entrada (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " id_sesion INTEGER NOT NULL," +
+                " fila INTEGER," +
+                " butaca INTEGER," +
+                " estado TEXT NOT NULL DEFAULT 'LIBRE'," + 
+                " UNIQUE(id_sesion, fila, butaca)," +
+                " FOREIGN KEY(id_sesion) REFERENCES sesion(id)" +
+                ");"
             );
-
 
             // Tabla compra/reserva
             stmt.executeUpdate(
-            	"CREATE TABLE IF NOT EXISTS compra (" +
-            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            	" email_usuario TEXT NOT NULL," + 
-            	" id_entrada INTEGER NOT NULL," +
-            	" estado TEXT NOT NULL DEFAULT 'RESERVADA'," + 
-            	" creado_en INTEGER NOT NULL," + 
-            	" expira_en INTEGER NOT NULL," +
-            	" UNIQUE(id_entrada) ON CONFLICT IGNORE," + 
-            	" FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
-            	");"
+                "CREATE TABLE IF NOT EXISTS compra (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " email_usuario TEXT NOT NULL," + 
+                " id_entrada INTEGER NOT NULL," +
+                " estado TEXT NOT NULL DEFAULT 'RESERVADA'," + 
+                " creado_en INTEGER NOT NULL," + 
+                " expira_en INTEGER NOT NULL," +
+                " UNIQUE(id_entrada) ON CONFLICT IGNORE," + 
+                " FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
+                ");"
             );
-
 
             // Tabla valoracion
             stmt.executeUpdate(
-            	"CREATE TABLE IF NOT EXISTS valoracion (" +
-            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            	" email_usuario TEXT NOT NULL," +
-            	" id_pelicula INTEGER NOT NULL," +
-            	" puntuacion INTEGER NOT NULL," + 
-            	" comentario TEXT," +
-            	" fecha INTEGER NOT NULL," + 
-            	" UNIQUE(email_usuario, id_pelicula)," +
-            	" FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
-            	");"
+                "CREATE TABLE IF NOT EXISTS valoracion (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " email_usuario TEXT NOT NULL," +
+                " id_pelicula INTEGER NOT NULL," +
+                " puntuacion INTEGER NOT NULL," + 
+                " comentario TEXT," +
+                " fecha INTEGER NOT NULL," + 
+                " UNIQUE(email_usuario, id_pelicula)," +
+                " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
+                ");"
             );
-
 
             // Tabla reventa
             stmt.executeUpdate(
-            	"CREATE TABLE IF NOT EXISTS reventa (" +
-            	" id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            	" id_entrada INTEGER NOT NULL," +
-            	" vendedor_email TEXT NOT NULL," +
-            	" precio REAL NOT NULL," +
-            	" estado TEXT NOT NULL DEFAULT 'ACTIVA'," + 
-            	" creado_en INTEGER NOT NULL," +
-            	" FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
-            	");"
+                "CREATE TABLE IF NOT EXISTS reventa (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " id_entrada INTEGER NOT NULL," +
+                " vendedor_email TEXT NOT NULL," +
+                " precio REAL NOT NULL," +
+                " estado TEXT NOT NULL DEFAULT 'ACTIVA'," + 
+                " creado_en INTEGER NOT NULL," +
+                " FOREIGN KEY(id_entrada) REFERENCES entrada(id)" +
+                ");"
             );
 
-            
-
-            
-            
-
-            System.out.println("Tablas creadas (si no exist�an).");
+            System.out.println("Tablas verificadas correctamente en la nueva DB.");
 
         } catch (SQLException e) {
             System.err.println("Error inicializando la BD:");
@@ -181,11 +167,9 @@ public class DBInitializer {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                // NO cerramos la conexi�n aqu� � ser� cerrada al final del programa
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 }
-
