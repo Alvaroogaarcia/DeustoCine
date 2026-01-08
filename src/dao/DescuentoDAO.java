@@ -28,14 +28,17 @@ public class DescuentoDAO {
 		}
 		return false;
 	}
-	public boolean insertar(DescuentoPelicula d) {
+
+
+	public boolean insertar(DescuentoPelicula d, int idEntidad) {
 	
-		String sql = "INSERT INTO descuento (codigo, porcentaje) VALUES (?, ?)";
+		String sql = "INSERT INTO descuento (codigo, porcentaje, id_entidad) VALUES (?, ?, ?)";
 		try (Connection conn= DBConnection.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)){
 			
 			ps.setString(1, d.getCodigo());
 			ps.setDouble(2, d.getPorcentaje());
+            ps.setInt(3, idEntidad); 
 			
 			ps.executeUpdate();
 			return true;
@@ -44,32 +47,31 @@ public class DescuentoDAO {
 			e.printStackTrace();
 			return false;
 		}
-	
-	
 	}
+
 	// Busca un descuento por su código (lo usa la ruleta de PagoEntrada)
 	public DescuentoPelicula buscarPorCodigo(String codigo) {
-	    String sql = "SELECT id, codigo, porcentaje FROM descuento WHERE codigo = ?";
-	    try (Connection conn = DBConnection.getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT id, codigo, porcentaje FROM descuento WHERE codigo = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-	        ps.setString(1, codigo);
+            ps.setString(1, codigo);
 
-	        try (ResultSet rs = ps.executeQuery()) {
-	            if (rs.next()) {
-	                int id = rs.getInt("id");
-	                String cod = rs.getString("codigo");
-	                double porcentaje = rs.getDouble("porcentaje");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String cod = rs.getString("codigo");
+                    double porcentaje = rs.getDouble("porcentaje");
 
-	                return new DescuentoPelicula(id, cod, porcentaje);
-	            }
-	        }
+                    return new DescuentoPelicula(id, cod, porcentaje);
+                }
+            }
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-	    return null;
+        return null;
 	}
 	
     // Se basa en la primera letra del código
@@ -106,7 +108,7 @@ public class DescuentoDAO {
         return lista.get(random.nextInt(lista.size()));
     }
 
-    // Misma lógica de letras que usáis al generar códigos en gui.Descuento
+   
     private char obtenerLetraGenero(String genero) {
         if (genero == null) return 'X';
 

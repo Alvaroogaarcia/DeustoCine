@@ -1,33 +1,29 @@
 package gui;
 
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Random;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import dao.DescuentoDAO;
 import domain.DescuentoPelicula;
 
-public class Descuento extends JFrame{
+public class Descuento extends JFrame {
 
-	private JComboBox<String> cmbGenero;
+    private JComboBox<String> cmbGenero;
     private JTextField txtPorcentaje;
 
     public Descuento() {
 
-    	// Configuración de la ventana
-    	setTitle("Crear Descuento");
+        // Configuración de la ventana
+        setTitle("Crear Descuento");
         setSize(350, 220);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -97,14 +93,18 @@ public class Descuento extends JFrame{
         DescuentoPelicula descuento = new DescuentoPelicula(codigo, porcentaje);
 
         DescuentoDAO dao = new DescuentoDAO();
+        
 
-        if (dao.insertar(descuento)) {
+        int idEntidad = 1; 
+
+        // Pasamos el idEntidad al método insertar
+        if (dao.insertar(descuento, idEntidad)) {
             JOptionPane.showMessageDialog(this,
                     "Descuento creado!\nCódigo generado: " + codigo);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this,
-                    "Error: ya existe un descuento con ese código",
+                    "Error: No se pudo guardar. Verifica que exista la entidad con ID " + idEntidad,
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
