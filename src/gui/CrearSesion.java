@@ -11,7 +11,9 @@ import java.sql.SQLException;
 
 import database.DBConnection;
 import dao.PeliculaDAO;
+import dao.SesionDAO;
 import domain.Pelicula;
+import domain.Sesion;
 
 public class CrearSesion extends JFrame {
 
@@ -125,37 +127,31 @@ public class CrearSesion extends JFrame {
             return;
         }
 
-        // Fecha
         Date fechaDate = (Date) spnFecha.getValue();
         String fechaStr = new SimpleDateFormat("yyyy-MM-dd").format(fechaDate);
 
-        // Hora
         Date horaDate = (Date) spnHora.getValue();
         String horaStr = new SimpleDateFormat("HH:mm").format(horaDate);
 
         String sala = (String) cmbSala.getSelectedItem();
 
-        String sql = "INSERT INTO sesion (id_Pelicula, fecha, hora, sala) VALUES (?, ?, ?, ?)";
+        int idEntidad = 1; // ⚠️ Temporal. Luego será la entidad logueada
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Sesion sesion = new Sesion(
+            idEntidad,
+            pelicula.getId(),
+            fechaStr,
+            horaStr,
+            sala
+        );
 
-            ps.setInt(1, pelicula.getId());
-            ps.setString(2, fechaStr);
-            ps.setString(3, horaStr);
-            ps.setString(4, sala);
+        SesionDAO dao = new SesionDAO();
+        dao.insertar(sesion);
 
-            ps.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Sesión creada correctamente.");
-
-            limpiarCampos();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al crear la sesión.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        JOptionPane.showMessageDialog(this, "Sesión creada correctamente.");
+        limpiarCampos();
     }
+
 
     private void limpiarCampos() {
         cmbPeliculas.setSelectedIndex(0);
