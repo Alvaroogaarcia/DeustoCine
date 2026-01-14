@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import database.DBConnection;
 import domain.Cliente;
@@ -20,14 +22,9 @@ public class ClienteDAO {
 
             pstmt.setString(1, cliente.getNombre());
             pstmt.setString(2, cliente.getEmail());
-            // Usamos getNumTelefono porque tu clase Cliente hereda de Usuario
             pstmt.setString(3, cliente.getNumTelefono()); 
             pstmt.setString(4, cliente.getDireccion());
-            // Ojo: tu clase Cliente usa 'contrasena' en el constructor, pero 'getContrasenya' suele venir de Usuario. 
-            // Asegúrate de usar el getter correcto. Asumo getContrasenya() o getContrasena().
             pstmt.setString(5, cliente.getContrasenya());
-            
-            // Usamos el getter que devuelve String, tal como lo tienes definido
             pstmt.setString(6, cliente.getFechaNacimiento());
 
             int filas = pstmt.executeUpdate();
@@ -40,7 +37,7 @@ public class ClienteDAO {
         }
     }
 
-    // ACTUALIZAR SALDO: Este método conecta tu botón con la base de datos
+    // ACTUALIZAR SALDO
     public void actualizarSaldo(Cliente c) {
         String sql = "UPDATE cliente SET saldo = ? WHERE email = ?";
         
@@ -73,18 +70,15 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                // AQUÍ LLAMAMOS A TU CONSTRUCTOR ESPECÍFICO
-                // Orden: nombre, email, telefono, direccion, contrasenya, fechaNacimiento
                 Cliente c = new Cliente(
                     rs.getString("nombre"),
                     rs.getString("email"),
                     rs.getString("telefono"),
                     rs.getString("direccion"),
                     rs.getString("contrasenya"),
-                    rs.getString("fechaNacimiento") // Tu constructor lo convertirá a LocalDate
+                    rs.getString("fechaNacimiento")
                 );
                 
-                // IMPORTANTE: Leemos el saldo de la BD y lo ponemos en el objeto
                 double saldoBD = rs.getDouble("saldo");
                 c.setSaldo(saldoBD);
                 
@@ -95,5 +89,33 @@ public class ClienteDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    
+    public List<String> obtenerPeliculasDeCliente(String emailCliente) {
+        List<String> listaPeliculas = new ArrayList<>();
+        
+        String sql = "SELECT p.titulo " +
+                     "FROM pelicula p " +
+                     "JOIN compra c ON p.id = c.id_pelicula " +
+                     "WHERE c.email_cliente = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, emailCliente);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                // Añadimos el título de la película a la lista
+                listaPeliculas.add(rs.getString("titulo"));
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error al obtener películas del cliente: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return listaPeliculas;
     }
 }

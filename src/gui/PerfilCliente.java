@@ -1,16 +1,12 @@
 package gui;
 
 import javax.swing.*;
-
 import dao.ClienteDAO;
-import dao.UsuarioDAO;
 import domain.Cliente;
-import domain.Usuario;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.util.List; // Import necesario para listas
 
 public class PerfilCliente extends JFrame {
 
@@ -20,13 +16,12 @@ public class PerfilCliente extends JFrame {
     private JButton btnVolver;
     private JLabel lblSaldo;
 
-
     public PerfilCliente(Cliente cliente) {
         this.cliente = cliente;
 
         // Configuración de la ventana
         setTitle("Deusto Cine - Perfil Cliente");
-        setSize(500, 400);
+        setSize(500, 500); 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -34,7 +29,7 @@ public class PerfilCliente extends JFrame {
         getContentPane().setBackground(new Color(245, 245, 245));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(8, 10, 8, 10); 
         gbc.anchor = GridBagConstraints.WEST;
 
         // Título
@@ -54,12 +49,8 @@ public class PerfilCliente extends JFrame {
         lblEmail = new JLabel("Email: ");
         lblTelefono = new JLabel("Teléfono: ");
         lblDireccion = new JLabel("Dirección: ");
-        lblFechaN = new JLabel("Fecha de nacimiento ");
+        lblFechaN = new JLabel("Fecha de nacimiento: ");
         lblSaldo = new JLabel("Saldo: ");
-       
-
-        
-        
 
         // Color de texto uniforme
         Color colorTexto = new Color(60, 60, 60);
@@ -68,8 +59,7 @@ public class PerfilCliente extends JFrame {
         lblTelefono.setForeground(colorTexto);
         lblDireccion.setForeground(colorTexto);
         lblFechaN.setForeground(colorTexto);
-        
-        
+        lblSaldo.setForeground(colorTexto); // Aseguramos color al saldo también
 
         // Añadimos los labels
         add(lblNombre, gbc);
@@ -85,58 +75,75 @@ public class PerfilCliente extends JFrame {
         add(lblSaldo, gbc);
         gbc.gridy++;
 
-        // Botones cerrar sesión y volver
-        JButton btnCerrarSesion = new JButton("Cerrar Sesión");
-        btnCerrarSesion.setBackground(new Color(70, 130, 180));
-        btnCerrarSesion.setForeground(Color.WHITE);
-        btnCerrarSesion.setFocusPainted(false);
-        btnCerrarSesion.setPreferredSize(new Dimension(150, 30));
+        // --- SECCIÓN DE BOTONES ---
         
-        btnVolver = new JButton("Volver");
-        btnVolver.setBackground(new Color(70, 130, 180));
-        btnVolver.setForeground(Color.WHITE);
-        btnVolver.setFocusPainted(false);
-        btnVolver.setPreferredSize(new Dimension(150, 30));
+        // Estilo común para botones
+        Dimension buttonSize = new Dimension(180, 30);
+        Color buttonColor = new Color(70, 130, 180);
+        Color textColor = Color.WHITE;
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnCerrarSesion, gbc);
+        // 1. Botón Cerrar Sesión
+        JButton btnCerrarSesion = new JButton("Cerrar Sesión");
+        btnCerrarSesion.setBackground(buttonColor);
+        btnCerrarSesion.setForeground(textColor);
+        btnCerrarSesion.setFocusPainted(false);
+        btnCerrarSesion.setPreferredSize(buttonSize);
         
+        // 2. Botón Volver
+        btnVolver = new JButton("Volver");
+        btnVolver.setBackground(buttonColor);
+        btnVolver.setForeground(textColor);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setPreferredSize(buttonSize);
+
+        // 3. Botón Recargar Saldo
+        JButton btnRecargar = new JButton("Añadir saldo");
+        btnRecargar.setBackground(buttonColor);
+        btnRecargar.setForeground(textColor);
+        btnRecargar.setFocusPainted(false);
+        btnRecargar.setPreferredSize(buttonSize);
+
+        // 4. NUEVO BOTÓN: Ver Películas Compradas
+        JButton btnVerPeliculas = new JButton("Mis Películas");
+        btnVerPeliculas.setBackground(new Color(60, 179, 113)); // Un verde para diferenciarlo, o usa buttonColor
+        btnVerPeliculas.setForeground(textColor);
+        btnVerPeliculas.setFocusPainted(false);
+        btnVerPeliculas.setPreferredSize(buttonSize);
+
+        // Añadir botones al layout (Centrados)
         gbc.gridx = 0;
-        gbc.gridy++;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
+
+        // Orden de botones
+        gbc.gridy++;
+        add(btnRecargar, gbc);
+        
+        gbc.gridy++;
+        add(btnVerPeliculas, gbc); // Añadimos el nuevo botón aquí
+
+        gbc.gridy++;
         add(btnVolver, gbc);
         
-        JButton btnRecargar = new JButton("Añadir saldo");
-        add(btnRecargar);
-
-        
-        gbc.gridx = 0;
         gbc.gridy++;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnRecargar, gbc);
+        add(btnCerrarSesion, gbc);
+        
 
-        // Acción del botón
+        // --- ACCIONES DE LOS BOTONES ---
+
         btnCerrarSesion.addActionListener(e -> {
             dispose();
             new Login().setVisible(true);
         });
         
         btnVolver.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				dispose();
-				Principal p = new Principal(cliente);
-				p.setVisible(true);
-				
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                Principal p = new Principal(cliente);
+                p.setVisible(true);
+            }
+        });
         
         btnRecargar.addActionListener(e -> {
             String input = JOptionPane.showInputDialog(
@@ -154,7 +161,6 @@ public class PerfilCliente extends JFrame {
                 new ClienteDAO().actualizarSaldo(cliente);
 
                 lblSaldo.setText("Saldo: " + String.format("%.2f €", cliente.getSaldo()));
-
                 JOptionPane.showMessageDialog(this, "Saldo añadido correctamente");
 
             } catch (NumberFormatException ex) {
@@ -162,6 +168,39 @@ public class PerfilCliente extends JFrame {
             }
         });
 
+        
+        btnVerPeliculas.addActionListener(e -> {
+            try {
+                
+                ClienteDAO dao = new ClienteDAO();
+                
+             
+                List<String> peliculas = dao.obtenerPeliculasDeCliente(cliente.getEmail()); 
+                
+                if (peliculas == null || peliculas.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "No has comprado ninguna película todavía.");
+                } else {
+                    // Convertimos la lista en un String bonito para mostrarlo
+                    StringBuilder mensaje = new StringBuilder("Tus películas compradas:\n\n");
+                    for (String peli : peliculas) {
+                        mensaje.append("- ").append(peli).append("\n");
+                    }
+                    
+                    // Mostramos la lista en un cuadro de diálogo con scroll por si son muchas
+                    JTextArea textArea = new JTextArea(mensaje.toString());
+                    textArea.setEditable(false);
+                    textArea.setOpaque(false);
+                    JScrollPane scrollPane = new JScrollPane(textArea);
+                    scrollPane.setPreferredSize(new Dimension(350, 200));
+                    
+                    JOptionPane.showMessageDialog(this, scrollPane, "Historial de Compras", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al recuperar las películas: " + ex.getMessage());
+            }
+        });
 
         // Cargar los datos del cliente desde la base de datos
         cargarDatosCliente(cliente);
@@ -169,20 +208,13 @@ public class PerfilCliente extends JFrame {
 
     // Método que carga los datos del cliente desde la base de datos
     private void cargarDatosCliente(Cliente cliente) {
-    	lblNombre.setText("Nombre: " + cliente.getNombre());
+        lblNombre.setText("Nombre: " + cliente.getNombre());
         lblEmail.setText("Email: " + cliente.getEmail());
         lblTelefono.setText("Teléfono: " + cliente.getNumTelefono());
         lblDireccion.setText("Dirección: " + cliente.getDireccion());
         lblFechaN.setText("NIF: " + cliente.getFechaNacimiento());
         Double saldoObj = cliente.getSaldo();
         double saldo = (saldoObj != null) ? saldoObj : 0.0;
-        lblSaldo.setText(String.format("%.2f €", saldo));
-
-
-
+        lblSaldo.setText("Saldo: " + String.format("%.2f €", saldo));
     }
-
-   
-
 }
-
