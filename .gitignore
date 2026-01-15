@@ -2,3 +2,7 @@
 /.classpath
 /.project
 
+# Base de datos
+*.sqlite
+*.db
+resources/data/*.sqlite
