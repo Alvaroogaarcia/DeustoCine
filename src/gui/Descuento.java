@@ -56,6 +56,12 @@ public class Descuento extends JFrame {
         add(txtPorcentaje, gbc);
 
         // ---- Botón ----
+        JButton btnVolver = new JButton("Volver");
+        gbc.gridx = 0; gbc.gridy = 2;
+        add(btnVolver, gbc);
+
+        btnVolver.addActionListener(e -> dispose());
+        
         JButton btnCrear = new JButton("Crear Descuento");
         gbc.gridx = 1; gbc.gridy = 2;
         add(btnCrear, gbc);

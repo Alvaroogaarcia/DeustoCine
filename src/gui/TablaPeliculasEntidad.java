@@ -98,13 +98,18 @@ public class TablaPeliculasEntidad extends JFrame {
 
         // PANEL DE BOTONES RECURSIVOS
         JPanel panelBotones = new JPanel(new FlowLayout());
+        
+        JButton btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(e -> dispose());
 
         JButton btnContar = new JButton("Contar Películas");
         JButton btnMostrarTitulos = new JButton("Mostrar Títulos");
         JButton btnDuracionTotal = new JButton("Duración Total");
         JButton btnFiltrarGenero = new JButton("Filtrar por Género");
         JButton btnBuscarAnio = new JButton("Buscar por Año");
-
+        
+        
+        panelBotones.add(btnVolver);
         panelBotones.add(btnContar);
         panelBotones.add(btnMostrarTitulos);
         panelBotones.add(btnDuracionTotal);

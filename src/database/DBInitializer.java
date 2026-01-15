@@ -157,6 +157,45 @@ public class DBInitializer {
             	    " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
             	    ");"
             	);
+         // entidad de ejemplo 
+            stmt.executeUpdate(
+                "INSERT OR IGNORE INTO entidad (id, nombre, email, telefono, direccion, contrasenya, nif) VALUES " +
+                "(1, 'Cines Deusto', 'cines@deusto.com', '944000000', 'Bilbao, España', '1234', 'B12345678');"
+            );
+
+            // películas de ejemplo
+            stmt.executeUpdate(
+                "INSERT OR REPLACE INTO pelicula (id, titulo, anio, duracion, genero, sinopsis, aforo, imagen) VALUES " +
+                "(1, 'Django', 2012, 165, 'Western', 'Un esclavo liberado se une a un cazarrecompensas.', 100, 'django.jpeg'), " +
+                "(2, 'Titanic', 1997, 195, 'Drama', 'Una historia de amor en el famoso trasatlántico.', 150, 'titanic.jpeg'), " +
+                "(3, 'Inception', 2010, 148, 'Ciencia Ficción', 'Un ladrón que roba secretos del subconsciente.', 120, 'inception.jpeg'), " +
+                "(4, 'El Padrino', 1972, 175, 'Drama', 'La historia de una familia mafiosa.', 100, 'el_padrino.jpeg'), " +
+                "(5, 'Forrest Gump', 1994, 142, 'Drama', 'La vida extraordinaria de un hombre simple.', 130, 'forest.jpeg'), " +
+                "(6, 'El Señor de los Anillos', 2001, 178, 'Fantasía', 'Un hobbit debe destruir un anillo mágico.', 140, 'anillos.jpeg'), " +
+                "(7, 'Cars', 2006, 117, 'Animación', 'Un coche de carreras aprende sobre la amistad.', 100, 'cars.jpeg'), " +
+                "(8, 'Transformers', 2007, 144, 'Acción', 'Robots alienígenas luchan en la Tierra.', 110, 'Transformers1.jpeg');"
+            );
+
+            // sesiones de ejemplo 
+            stmt.executeUpdate(
+                "INSERT OR REPLACE INTO sesion (id_entidad, id_pelicula, fecha, hora, sala) VALUES " +
+                "(1, 1, '2026-01-18', '18:00', 'Sala 1'), " +
+                "(1, 1, '2026-01-18', '21:00', 'Sala 1'), " +
+                "(1, 2, '2026-01-18', '17:30', 'Sala 2'), " +
+                "(1, 2, '2026-01-19', '20:00', 'Sala 2'), " +
+                "(1, 3, '2026-01-18', '19:00', 'Sala 3'), " +
+                "(1, 3, '2026-01-19', '22:00', 'Sala 3'), " +
+                "(1, 4, '2026-01-19', '18:30', 'Sala 1'), " +
+                "(1, 4, '2026-01-20', '21:30', 'Sala 1'), " +
+                "(1, 5, '2026-01-19', '17:00', 'Sala 4'), " +
+                "(1, 5, '2026-01-20', '20:00', 'Sala 4'), " +
+                "(1, 6, '2026-01-19', '19:30', 'Sala 2'), " +
+                "(1, 6, '2026-01-20', '22:30', 'Sala 2'), " +
+                "(1, 7, '2026-01-20', '16:00', 'Sala 5'), " +
+                "(1, 7, '2026-01-21', '18:00', 'Sala 5'), " +
+                "(1, 8, '2026-01-20', '20:30', 'Sala 3'), " +
+                "(1, 8, '2026-01-21', '23:00', 'Sala 3');"
+            );
 
             // Tabla reventa
             stmt.executeUpdate(

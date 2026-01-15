@@ -65,16 +65,26 @@ public class CompraEntradas extends JFrame {
     
         JPanel panelSuperior = new JPanel(new BorderLayout(5, 5));
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    
+
+        
+        JButton btnVolver = new JButton("← Volver");
+        btnVolver.addActionListener(e -> {
+            dispose();
+            new Principal(cliente).setVisible(true);
+        });
+        panelSuperior.add(btnVolver, BorderLayout.WEST);
+
+        
         txtBusqueda = new JTextField();
         panelSuperior.add(txtBusqueda, BorderLayout.CENTER);
-    
+
+        
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         btnFiltro = new JButton("Filtro");
         btnBuscar = new JButton("Buscar");
         panelBotones.add(btnFiltro);
         panelBotones.add(btnBuscar);
-    
+
         panelSuperior.add(panelBotones, BorderLayout.EAST);
         add(panelSuperior, BorderLayout.NORTH);
     
