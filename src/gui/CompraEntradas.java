@@ -39,7 +39,7 @@ import domain.Valoracion;
 
 public class CompraEntradas extends JFrame {
 
-    private static final String RUTA_IMAGENES = "resources/data/imagenes/";
+	private static final String RUTA_IMAGENES = "/imagenes/";
     
     private JTextField txtBusqueda;
     private JButton btnBuscar;
@@ -184,11 +184,18 @@ public class CompraEntradas extends JFrame {
             nombreImagen = partes[partes.length - 1];
         }
         
-        File archivo = new File(RUTA_IMAGENES + nombreImagen);
-        if (!archivo.exists()) return null;
         
-        ImageIcon iconoOriginal = new ImageIcon(RUTA_IMAGENES + nombreImagen);
+        java.net.URL imageURL = getClass().getResource(RUTA_IMAGENES + nombreImagen);
+        
+        if (imageURL == null) {
+            
+            System.out.println("⚠️ Imagen no encontrada: " + nombreImagen);
+            return null; 
+        }
+        
+        ImageIcon iconoOriginal = new ImageIcon(imageURL);
         if (iconoOriginal.getIconWidth() <= 0) return null;
+        
         Image imgEscalada = iconoOriginal.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
         return new ImageIcon(imgEscalada);
     }
