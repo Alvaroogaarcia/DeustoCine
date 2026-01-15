@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List; // Import necesario para listas
+import java.util.Map;
 
 public class PerfilCliente extends JFrame {
 
@@ -171,38 +172,71 @@ public class PerfilCliente extends JFrame {
         
         btnVerPeliculas.addActionListener(e -> {
             try {
-                
                 ClienteDAO dao = new ClienteDAO();
+                List<Map<String, String>> compras = dao.obtenerComprasDeCliente(cliente.getEmail());
                 
-             
-                List<String> peliculas = dao.obtenerPeliculasDeCliente(cliente.getEmail()); 
-                
-                if (peliculas == null || peliculas.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "No has comprado ninguna película todavía.");
+                if (compras == null || compras.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                        this, 
+                        "No has comprado ninguna entrada todavía.\n" +
+                        "(Las entradas deben estar PAGADAS para aparecer aquí)", 
+                        "Historial de Compras", 
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
                 } else {
-                    // Convertimos la lista en un String bonito para mostrarlo
-                    StringBuilder mensaje = new StringBuilder("Tus películas compradas:\n\n");
-                    for (String peli : peliculas) {
-                        mensaje.append("- ").append(peli).append("\n");
+                    
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                    
+                    JLabel tituloCompras = new JLabel("Mis Compras");
+                    tituloCompras.setFont(new Font("Arial", Font.BOLD, 16));
+                    tituloCompras.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    panel.add(tituloCompras);
+                    panel.add(Box.createRigidArea(new Dimension(0, 15)));
+                    
+                    for (int i = 0; i < compras.size(); i++) {
+                        Map<String, String> compra = compras.get(i);
+                        
+                        String info = String.format(
+                            "<html><b>%d. %s</b><br>" +
+                            "    %s a las %s<br>" +
+                            "    %s<br><br></html>",
+                            (i + 1),
+                            compra.get("titulo"),
+                            compra.get("fecha") != null ? compra.get("fecha") : "Fecha no disponible",
+                            compra.get("hora") != null ? compra.get("hora") : "N/A",
+                            compra.get("sala") != null ? compra.get("sala") : "Sala no disponible"
+                        );
+                        
+                        JLabel lblCompra = new JLabel(info);
+                        lblCompra.setFont(new Font("Arial", Font.PLAIN, 12));
+                        panel.add(lblCompra);
                     }
                     
-                    // Mostramos la lista en un cuadro de diálogo con scroll por si son muchas
-                    JTextArea textArea = new JTextArea(mensaje.toString());
-                    textArea.setEditable(false);
-                    textArea.setOpaque(false);
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(350, 200));
+                    JScrollPane scrollPane = new JScrollPane(panel);
+                    scrollPane.setPreferredSize(new Dimension(450, 400));
                     
-                    JOptionPane.showMessageDialog(this, scrollPane, "Historial de Compras", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                        this, 
+                        scrollPane, 
+                        "Mis Compras", 
+                        JOptionPane.PLAIN_MESSAGE
+                    );
                 }
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al recuperar las películas: " + ex.getMessage());
+                JOptionPane.showMessageDialog(
+                    this, 
+                    "Error al recuperar las compras: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
             }
         });
 
-        // Cargar los datos del cliente desde la base de datos
+        
         cargarDatosCliente(cliente);
     }
 

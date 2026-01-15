@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import database.DBConnection;
 import domain.Cliente;
@@ -92,17 +94,21 @@ public class ClienteDAO {
     }
 
     
-    public List<String> obtenerPeliculasDeCliente(String emailCliente) {
-        List<String> listaPeliculas = new ArrayList<>();
+    public List<Map<String, String>> obtenerComprasDeCliente(String emailCliente) {
+        List<Map<String, String>> compras = new ArrayList<>();
         
-        
-        String sql = "SELECT DISTINCT p.titulo " +
+        String sql = "SELECT DISTINCT " +
+                     "  p.titulo, " +
+                     "  s.fecha, " +
+                     "  s.hora, " +
+                     "  s.sala, " +
+                     "  pc.fecha_compra " +
                      "FROM pelicula_comprada pc " +
                      "INNER JOIN pelicula p ON pc.id_pelicula = p.id " +
+                     "LEFT JOIN sesion s ON s.id_pelicula = p.id " +
                      "WHERE pc.email_cliente = ? " +
                      "ORDER BY pc.fecha_compra DESC";
 
-        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -110,14 +116,19 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                listaPeliculas.add(rs.getString("titulo"));
+                Map<String, String> compra = new HashMap<>();
+                compra.put("titulo", rs.getString("titulo"));
+                compra.put("fecha", rs.getString("fecha"));
+                compra.put("hora", rs.getString("hora"));
+                compra.put("sala", rs.getString("sala"));
+                compras.add(compra);
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener películas del cliente: " + e.getMessage());
+            System.err.println("Error al obtener compras del cliente: " + e.getMessage());
             e.printStackTrace();
         }
         
-        return listaPeliculas;
+        return compras;
     }
 }
