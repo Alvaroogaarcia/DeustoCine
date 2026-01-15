@@ -95,11 +95,14 @@ public class ClienteDAO {
     public List<String> obtenerPeliculasDeCliente(String emailCliente) {
         List<String> listaPeliculas = new ArrayList<>();
         
-        String sql = "SELECT p.titulo " +
-                     "FROM pelicula p " +
-                     "JOIN compra c ON p.id = c.id_pelicula " +
-                     "WHERE c.email_cliente = ?";
+        
+        String sql = "SELECT DISTINCT p.titulo " +
+                     "FROM pelicula_comprada pc " +
+                     "INNER JOIN pelicula p ON pc.id_pelicula = p.id " +
+                     "WHERE pc.email_cliente = ? " +
+                     "ORDER BY pc.fecha_compra DESC";
 
+        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -107,7 +110,6 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                // Añadimos el título de la película a la lista
                 listaPeliculas.add(rs.getString("titulo"));
             }
             

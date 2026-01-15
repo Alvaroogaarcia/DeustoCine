@@ -267,17 +267,39 @@ public class PagoEntrada extends JFrame{
 
         if (opcion != JOptionPane.YES_OPTION) return;
 
-        // Actualizar saldo
-        cliente.setSaldo(cliente.getSaldo() - precioFinalActual);
+        try {
+            
+            cliente.setSaldo(cliente.getSaldo() - precioFinalActual);
+            new ClienteDAO().actualizarSaldo(cliente);
 
-        // Guardar película comprada
-        cliente.agregarCompra(idPelicula);
+            
+            String sql = "INSERT INTO pelicula_comprada (email_cliente, id_pelicula, fecha_compra, precio_pagado) VALUES (?, ?, ?, ?)";
+            
+            try (java.sql.Connection conn = database.DBConnection.getConnection();
+                 java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+                pstmt.setString(1, cliente.getEmail());
+                pstmt.setInt(2, idPelicula);
+                pstmt.setLong(3, System.currentTimeMillis());
+                pstmt.setDouble(4, precioFinalActual);
+                
+                pstmt.executeUpdate();
+                System.out.println("✓ Compra guardada en BD");
+            }
 
-        // Actualizar en BD
-        new ClienteDAO().actualizarSaldo(cliente);
+            
+            cliente.agregarCompra(idPelicula);
 
-        JOptionPane.showMessageDialog(this, "Pago realizado con éxito 🎉");
-        dispose();
+            JOptionPane.showMessageDialog(this, "Pago realizado con éxito 🎉");
+            dispose();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error al procesar el pago: " + e.getMessage(),
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 

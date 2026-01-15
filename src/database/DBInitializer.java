@@ -145,6 +145,18 @@ public class DBInitializer {
                 " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
                 ");"
             );
+            
+            //Tabla peliculas compradas
+            stmt.executeUpdate(
+            	    "CREATE TABLE IF NOT EXISTS pelicula_comprada (" +
+            	    " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            	    " email_cliente TEXT NOT NULL," +
+            	    " id_pelicula INTEGER NOT NULL," +
+            	    " fecha_compra INTEGER NOT NULL," +
+            	    " precio_pagado REAL NOT NULL," +
+            	    " FOREIGN KEY(id_pelicula) REFERENCES pelicula(id)" +
+            	    ");"
+            	);
 
             // Tabla reventa
             stmt.executeUpdate(
